@@ -31,6 +31,9 @@ jobs:
       - name: Verify economy and profiles
         working-directory: android
         run: ./gradlew --no-daemon :economy:check
+      - name: Verify Android profile storage
+        working-directory: android
+        run: ./gradlew --no-daemon -Parm64 -PdisableHWAsan -Pnjobs=2 :app:testFdroidDebugUnitTest --tests 'app.organicmaps.navismart.*Test'
       - name: Build arm64 APK
         working-directory: android
         run: ./gradlew --no-daemon -Parm64 -PdisableHWAsan -Pnjobs=2 :app:assembleFdroidDebug

@@ -19,10 +19,14 @@ public final class VehicleProfileRepository
   }
   public Catalog load() throws IOException
   {
-    String text = mPreferences.getString(KEY, null);
-    if (text == null) return Catalog.empty();
-    if (text.length() > 1_000_000) throw new IOException("Profile catalog is too large");
-    try { return new ProfileCodec().read(new StringReader(text)); }
+    try
+    {
+      String text = mPreferences.getString(KEY, null);
+      if (text == null) return Catalog.empty();
+      if (text.length() > 1_000_000) throw new IOException("Profile catalog is too large");
+      return new ProfileCodec().read(new StringReader(text));
+    }
+    catch (ClassCastException error) { throw new IOException("Invalid profile storage type", error); }
     catch (IllegalArgumentException error) { throw new IOException("Invalid profile catalog", error); }
   }
   public void save(Catalog catalog) throws IOException

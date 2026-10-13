@@ -130,7 +130,9 @@ public final class ProfileCodec
   private static Instant instant(Properties fields, String key)
   {
     String value = fields.getProperty(key);
-    return value == null ? null : Instant.parse(value);
+    try { return value == null ? null : Instant.parse(value); }
+    catch (java.time.format.DateTimeParseException error)
+    { throw new IllegalArgumentException("Invalid observation date: " + key, error); }
   }
   private static int count(Properties fields, String key, int min, int max)
   {

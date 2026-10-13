@@ -15,6 +15,15 @@ public final class VehicleProfiles
   private VehicleProfiles() {}
   public enum Gearbox { UNKNOWN, MANUAL, AUTOMATIC, CVT }
 
+  public record Validity(Duration stock, Duration consumption, Duration price)
+  {
+    public Validity
+    {
+      for (Duration duration : List.of(stock, consumption, price))
+        if (duration.isZero() || duration.isNegative()) throw new IllegalArgumentException("Lifetime must be positive");
+    }
+  }
+
   public record Characteristics(Double massKg, Gearbox gearbox, List<Double> gearRatios)
   {
     public Characteristics
@@ -58,16 +67,19 @@ public final class VehicleProfiles
     /** The caller supplies the stock validity policy; stale, undated and future stocks become unknown. */
     public Vehicle forTrip(Instant now, Duration stockLifetime)
     {
+      return forTrip(now, new Validity(stockLifetime, Duration.ofDays(365), Duration.ofDays(1)));
+    }
+
+    public Vehicle forTrip(Instant now, Validity validity)
+    {
       Objects.requireNonNull(now);
-      Objects.requireNonNull(stockLifetime);
-      if (stockLifetime.isZero() || stockLifetime.isNegative())
-        throw new IllegalArgumentException("Stock lifetime must be positive");
+      Objects.requireNonNull(validity);
       boolean usable = stockObservedAt != null && !stockObservedAt.isAfter(now)
-          && Duration.between(stockObservedAt, now).compareTo(stockLifetime) <= 0;
+          && Duration.between(stockObservedAt, now).compareTo(validity.stock()) <= 0;
       return new Vehicle(vehicle.id(), vehicle.name(), vehicle.powertrain(), vehicle.stores().stream()
           .map(s -> new Store(s.id(), s.energy(), s.capacity(), usable ? s.initialStock() : null, s.reserve(),
-                              dated(s.consumptionPer100Km(), now, Duration.ofDays(365)),
-                              dated(s.referencePrice(), now, Duration.ofDays(1)))).toList());
+                              dated(s.consumptionPer100Km(), now, validity.consumption()),
+                              dated(s.referencePrice(), now, validity.price()))).toList());
     }
 
     private static Estimate dated(Estimate value, Instant now, Duration lifetime)

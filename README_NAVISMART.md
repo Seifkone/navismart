@@ -38,6 +38,25 @@ Sous Linux/macOS : `./android/gradlew -p navismart/economy check simulate`.
 Gradle télécharge ses outils de compilation au premier lancement ; le moteur ne fait aucun appel réseau.
 Les tests PowerShell n’ont aucune dépendance à télécharger.
 
+## Profils véhicule et premier raccordement Android
+
+Les [profils véhicule](docs/navismart/vehicle-profiles.md) sont enregistrables localement.
+Le simulateur peut comparer plusieurs motorisations sur les mêmes trajets :
+
+```powershell
+./tools/navismart/run-economy.ps1 -Mode Simulate -Scenario ./navismart/economy/scenarios/two-routes.properties -Profiles ./navismart/economy/scenarios/vehicle-profiles.properties -Vehicle all -At '2026-10-13T12:00:00Z'
+```
+
+Ces profils et chiffres sont fictifs ; l’horloge fixe rend leur scénario reproductible.
+59 scénarios Java couvrent maintenant le moteur et les profils.
+
+Le code Android ajoute **Réglages → NaviSmart · Véhicules**, avec un profil actif,
+un éditeur et un aperçu du coût de l’énergie pour le trajet automobile préparé dans CoMaps.
+L’aperçu utilise les nombres et unités du moteur embarqué, avec frais et péages inconnus
+laissés inconnus. Il n’effectue pas encore de sélection entre plusieurs itinéraires.
+Le workflow `NaviSmart Android` exécute dix tests Android et construit un APK arm64
+de développement. Sa compilation et les essais sur téléphone sont des validations distinctes.
+
 ## État et limites
 
 Le simulateur compare les trajets et programmes de ravitaillement fournis en entrée.
@@ -45,8 +64,9 @@ Il ne génère pas encore les itinéraires CoMaps ni un programme optimal d’ar
 Ses exemples sont fictifs et ne constituent pas une calibration de la Kia Rio.
 Il ne donne aucun conseil de conduite.
 
-L’application Android du fork est encore la base CoMaps. Le calcul économique n’est
-pas encore raccordé à son interface. Aucun APK NaviSmart modifié n’a été livré.
+L’application Android utilise la base CoMaps avec les premiers réglages NaviSmart.
+Le calcul économique est raccordé à un aperçu ; la génération et la sélection des
+itinéraires économiques restent à réaliser. Aucun essai sur téléphone n’est attesté.
 Les sources publiques sont identifiées, mais les connecteurs de trafic et de prix
 ne sont pas encore actifs dans l’application.
 

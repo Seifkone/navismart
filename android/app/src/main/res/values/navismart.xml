@@ -29,6 +29,12 @@
   <string name="navismart_minimum_gain">Minimum saving (€)</string>
   <string name="navismart_switch_penalty">Route change penalty (€)</string>
   <string name="navismart_save">Save</string>
+  <string name="navismart_route_preview">Energy cost of the prepared route</string>
+  <string name="navismart_route_preview_summary">Estimate consumed energy using your active vehicle</string>
+  <string name="navismart_prepare_route">Select a vehicle and prepare a driving route on the map first. Open these settings before starting guidance.</string>
+  <string name="navismart_energy_preview_result">%1$s\nEstimated consumed energy: %2$s</string>
+  <string name="navismart_unknown">Unknown</string>
+  <string name="navismart_preview_notice">Conditional estimate using the prepared CoMaps route and your manual assumptions. Precision and energy feasibility are not guaranteed. Tolls, purchases and other fees are not included. This preview does not compare alternative routes or change navigation.</string>
   <string name="navismart_storage_error">Vehicle profiles could not be read or saved. Existing data has been kept; try opening this screen again.</string>
   <string name="navismart_invalid_profile">Check the name, non-negative numbers, both bounds around each estimate, capacity and fuel confirmation. Time and saving limits are required.</string>
   <string-array name="navismart_powertrains">
@@ -39,5 +45,11 @@
   </string-array>
   <string-array name="navismart_gearboxes">
     <item>Unknown</item><item>Manual</item><item>Automatic</item><item>CVT</item>
+  </string-array>
+  <string-array name="navismart_data_states">
+    <item>Current inputs</item><item>Stale inputs</item><item>Unknown data</item><item>Source unavailable</item><item>Invalid inputs</item>
+  </string-array>
+  <string-array name="navismart_feasibility">
+    <item>Energy levels compatible with the supplied values</item><item>Energy feasibility uncertain</item><item>Energy levels or reserve insufficient</item>
   </string-array>
 </resources>

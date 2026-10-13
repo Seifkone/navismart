@@ -27,7 +27,14 @@ L’éditeur initial couvre un réservoir, une batterie ou cette paire ; la bibl
 permet plusieurs réservoirs thermiques, mais l’éditeur de véhicules GPL bicarburants
 et de mélanges variables restera à compléter.
 
-Le moteur économique est inclus comme module Gradle de l’application. La génération
+Le moteur économique est inclus comme module Gradle de l’application. Un premier
+adaptateur lit la distance numérique et son unité ainsi que le temps en secondes du
+trajet automobile CoMaps préparé. Il fournit un aperçu énergétique dans les réglages,
+avant le guidage. Les kilomètres sont convertis sans parser le texte localisé ; les
+distances affichées par CoMaps peuvent être arrondies, donc leur précision reste non
+quantifiée. Les péages et autres frais absents restent inconnus. Cet aperçu affiche
+l’ancienneté des données et la faisabilité des niveaux, sans intervenir sur le trajet.
+La génération
 d’itinéraires alternatifs et leur sélection économique ne sont pas encore raccordées.
 Le nom de compilation est NaviSmart et son identifiant de base est `app.navismart`.
 L’APK F-Droid de développement est `app.navismart.fdroid.debug`.
@@ -45,6 +52,7 @@ observations datées déjà présentes dans un profil, le garde-fou initial cons
 maximum 24 heures pour le prix et 365 jours pour la consommation. Ces seuils conservateurs
 ne constituent pas une calibration. Les futurs connecteurs appliqueront les durées
 propres aux sources gouvernementales avant de fournir des observations au moteur.
+L’API `Validity` permet à un adaptateur de configurer séparément les trois durées.
 Une observation périmée n’est jamais renouvelée à la date de lecture du fichier.
 
 Le format `ProfileCodec` rejette versions inconnues, champs obligatoires absents,
@@ -70,7 +78,9 @@ et 5,4 € en électrique. Cela n’est pas une comparaison de véhicules réels
 
 ## Validation
 
-39 scénarios économiques et 18 scénarios de profils passent en Java 17 et via Gradle.
+39 scénarios économiques et 20 scénarios de profils sont exécutés en Java 17 et via Gradle.
+Le stockage Android et l’adaptateur de trajet possèdent dix tests supplémentaires
+avec les dépendances JUnit/Mockito existantes.
 Le workflow `NaviSmart Android` configure les ressources natives de CoMaps, vérifie
 le module et tente la compilation d’un APK arm64 de développement. Le résultat de
 cette compilation et les essais sur appareil doivent être vérifiés séparément.

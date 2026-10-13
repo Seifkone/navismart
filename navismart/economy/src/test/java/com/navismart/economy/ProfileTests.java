@@ -123,6 +123,14 @@ public final class ProfileTests
     });
     test("duplicate persistence fields rejected", () -> invalid(() -> decode(
         "format.version=1\nprofiles.count=0\nprofiles.count=1\n")));
+    test("invalid observation date is a controlled format error", () -> invalid(() -> decode(
+        encode(new Catalog(List.of(electric()), "ev")).replace("2026-10-13", "bad-date"))));
+    test("observation lifetimes can be set by the calling adapter", () -> {
+      var p = electric();
+      equal(null, p.forTrip(NOW.plusSeconds(60), new Validity(Duration.ofSeconds(30), Duration.ofDays(1),
+          Duration.ofHours(1))).stores().get(0).initialStock());
+      invalid(() -> new Validity(Duration.ofDays(1), Duration.ZERO, Duration.ofDays(1)));
+    });
     test("empty name and nonfinite consumption rejected", () -> {
       var p = electric();
       invalid(() -> new Profile(new Vehicle("ev", " ", Powertrain.ELECTRIC, p.vehicle().stores()),

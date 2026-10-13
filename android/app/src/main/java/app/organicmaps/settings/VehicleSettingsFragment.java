@@ -19,6 +19,8 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import app.organicmaps.R;
 import app.organicmaps.navismart.VehicleProfileRepository;
+import app.organicmaps.navismart.CoMapsEconomyAdapter;
+import app.organicmaps.sdk.routing.RoutingController;
 import com.navismart.economy.Estimate;
 import java.io.IOException;
 import java.time.Instant;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Locale;
 
 @Keep
 public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
@@ -83,6 +86,42 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
       return true;
     });
     screen.addPreference(add);
+    var preview = new Preference(requireContext());
+    preview.setTitle(R.string.navismart_route_preview);
+    preview.setSummary(R.string.navismart_route_preview_summary);
+    preview.setOnPreferenceClickListener(ignored -> { showRoutePreview(); return true; });
+    screen.addPreference(preview);
+  }
+
+  private void showRoutePreview()
+  {
+    var routing = RoutingController.get();
+    var info = routing.getCachedRoutingInfo();
+    if (mCatalog.active() == null || !routing.isPlanning() || !routing.isBuilt()
+        || !routing.isVehicleRouterType() || info == null)
+    {
+      new AlertDialog.Builder(requireContext()).setMessage(R.string.navismart_prepare_route)
+          .setPositiveButton(android.R.string.ok, null).show();
+      return;
+    }
+    try
+    {
+      var result = CoMapsEconomyAdapter.assess(mCatalog.active(), info.distToTarget, info.totalTimeInSeconds, Instant.now());
+      Estimate cost = result.consumedEnergyCostEuro();
+      String value = cost.expected() == null ? getString(R.string.navismart_unknown)
+          : String.format(Locale.getDefault(), "≈ %.1f €", cost.expected());
+      String status = getResources().getStringArray(R.array.navismart_data_states)[cost.state().ordinal()];
+      String reserve = getResources().getStringArray(R.array.navismart_feasibility)[result.feasibility().ordinal()];
+      new AlertDialog.Builder(requireContext()).setTitle(R.string.navismart_route_preview)
+          .setMessage(getString(R.string.navismart_energy_preview_result, mCatalog.active().vehicle().name(), value)
+              + "\n" + status + "\n" + reserve
+              + "\n\n" + getString(R.string.navismart_preview_notice))
+          .setPositiveButton(android.R.string.ok, null).show();
+    }
+    catch (IllegalArgumentException error)
+    {
+      Toast.makeText(requireContext(), R.string.navismart_prepare_route, Toast.LENGTH_LONG).show();
+    }
   }
 
   private void addInfo(int text)
