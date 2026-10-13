@@ -82,6 +82,7 @@ et 5,4 € en électrique. Cela n’est pas une comparaison de véhicules réels
 Le stockage Android et l’adaptateur de trajet possèdent dix tests supplémentaires
 avec les dépendances JUnit/Mockito existantes.
 Le workflow `NaviSmart Android` configure les ressources natives de CoMaps, vérifie
-le module et tente la compilation d’un APK arm64 de développement. Le résultat de
-cette compilation et les essais sur appareil doivent être vérifiés séparément.
+le module et compile un APK arm64 de développement. La [construction est réussie](https://github.com/Seifkone/navismart/actions/runs/38463027554),
+ainsi que les dix tests Android. Les métadonnées et la signature de l’APK téléchargé
+sont vérifiées dans `validation.md`. Les essais sur appareil restent à effectuer.
 La Kia Rio et son boîtier eFlexFuel ne sont pas calibrés par cette livraison.

@@ -40,5 +40,5 @@ pas zéro. La teneur en éthanol, la consommation réelle, le rapport engagé ou
 du boîtier eFlexFuel ne sont pas garantis par la compatibilité OBD annoncée.
 
 Les sessions de calibration et de validation seront distinctes. Aucun modèle de
-décélération ou conseil précis de rétrogradage ne sera activé à partir de cette seule
-fiche produit. Les enregistrements réels resteront hors du dépôt public.
+décélération ou conseil précis de rétrogradage ne sera activé à partir de la seule
+compatibilité annoncée d’un adaptateur. Les enregistrements réels resteront hors du dépôt public.

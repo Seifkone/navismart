@@ -57,6 +57,11 @@ laissés inconnus. Il n’effectue pas encore de sélection entre plusieurs itin
 Le workflow `NaviSmart Android` exécute dix tests Android et construit un APK arm64
 de développement. Sa compilation et les essais sur téléphone sont des validations distinctes.
 
+La [première construction Android est réussie](https://github.com/Seifkone/navismart/actions/runs/38463027554).
+L’archive `navismart-android-arm64-debug` contient l’APK NaviSmart Debug ; sa signature
+et ses métadonnées ont été vérifiées. Les 69 tests passent. Les essais sur appareil
+restent à effectuer, selon le [plan de validation](docs/navismart/device-validation.md).
+
 ## État et limites
 
 Le simulateur compare les trajets et programmes de ravitaillement fournis en entrée.
