@@ -1,0 +1,40 @@
+PASS shortest is not cheapest
+PASS percentage applied once with displayed minutes
+PASS time boundary inclusive
+PASS energy consumed differs from immediate expense
+PASS FIFO and remaining stock avoid double counting purchases
+PASS purchase fee included once in each distinct cost view
+PASS unknown tolls never become zero
+PASS confirmed zero tolls remain a usable value
+PASS station must be reachable before refuelling
+PASS negative stock is not silently clamped to zero
+PASS capacity checked at every purchase
+PASS reserve preserved exactly
+PASS zero starting stock is known and can be replenished before driving
+PASS unknown stock is not a full tank
+PASS unknown stock plus purchase has unknown consumed acquisition cost
+PASS electric losses separate bought and stored energy
+PASS hybrid split must be explicit
+PASS explicit hybrid split sums litres and kWh as costs
+PASS measured E85 consumption has no invented multiplier
+PASS overlapping cost ranges prevent oscillation
+PASS time uncertainty prevents a guaranteed switch
+PASS unquantified uncertainty is not a zero-width interval
+PASS minimum saving and switching penalty form hysteresis
+PASS stale price is visible and not used for a definitive choice
+PASS future timestamp is invalid
+PASS consumption range crossing reserve is uncertain
+PASS all impossible routes return no feasible route
+PASS missing fee and provider failure remain distinct states
+PASS time for a refuelling stop counts in the route budget
+PASS duplicate routes rejected
+PASS negative, infinite and NaN inputs rejected
+PASS inconsistent stock and reserve rejected
+PASS unknown consumption source rejected instead of ignored
+PASS tests independent of candidate input order
+PASS unknown purchase price cannot produce a definitive recommendation
+PASS source without observation date has unknown freshness
+PASS configurable scenario preserves unknown fees and unquantified uncertainty
+PASS configured timestamp is the observation date, not import time
+PASS dated quote without a source lifetime stays conditional
+PASS: 39 acceptance scenarios

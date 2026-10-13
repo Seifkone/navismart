@@ -1,0 +1,19 @@
+name: NaviSmart economic engine
+on:
+  push:
+    branches: [navismart]
+    paths: ['navismart/economy/**', 'tools/navismart/**', '.github/workflows/navismart-economy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compile and run offline acceptance scenarios
+        shell: pwsh
+        run: ./tools/navismart/run-economy.ps1 -Mode Test
+      - name: Run configurable simulation
+        shell: pwsh
+        run: ./tools/navismart/run-economy.ps1 -Mode Simulate -Scenario ./navismart/economy/scenarios/two-routes.properties

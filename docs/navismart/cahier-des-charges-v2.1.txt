@@ -1,0 +1,647 @@
+Cahier des charges — GPS économique universel et éco-conduite prédictive
+
+Version 2.1 — Priorité aux données ouvertes et à l'autonomie technique
+
+1. Vision du projet
+
+Développer une application GPS capable de minimiser le coût réel d'un déplacement en euros, en tenant compte du véhicule, de son énergie, des prix, du trafic, du temps de parcours et de la consommation liée aux détours.
+
+L'application doit prendre en charge progressivement les véhicules essence, diesel, flexfuel, GPL, hybrides, hybrides rechargeables et électriques.
+
+Elle doit également apprendre le comportement réel du véhicule pour améliorer ses estimations de consommation et anticiper les ralentissements.
+
+Principes fondamentaux
+
+Minimiser le coût énergétique réel, et non simplement la distance ou la durée.
+
+Respecter la contrainte de temps définie par l'utilisateur.
+
+Privilégier les données ouvertes, gratuites et réutilisables.
+
+Ne pas dépendre obligatoirement d'un fournisseur commercial payant.
+
+Fonctionner en mode dégradé lorsque certaines données sont indisponibles.
+
+Ne jamais présenter une estimation incertaine comme une valeur exacte.
+
+Placer la sécurité avant l'économie.
+
+Développer et tester chaque module indépendamment.
+
+L'objectif est de réduire au maximum les coûts récurrents, sans prétendre qu'une infrastructure hébergée sera nécessairement gratuite à vie.
+
+2. Priorisation du développement
+Indispensable — première version
+
+Simulateur économique indépendant du GPS.
+
+Calcul des coûts énergétiques et des frais.
+
+Contrainte de temps supplémentaire.
+
+Gestion des données absentes, périmées et incertaines.
+
+Tests automatisés.
+
+Architecture modulaire.
+
+Vérification précoce des licences et de la faisabilité des sources ouvertes.
+
+Important — versions suivantes
+
+Profils de véhicules.
+
+Modèle de décélération mesuré.
+
+Validation indépendante des prédictions.
+
+Routage réel et cartographie.
+
+Intégration des données publiques de circulation.
+
+Recalcul économique en cas de bouchon.
+
+Prix des carburants et données de recharge.
+
+À développer ensuite
+
+Données météo et estimation du vent.
+
+OBD-II et personnalisation des modèles.
+
+Conseils prédictifs de ralentissement.
+
+Conseils conditionnels de rétrogradage.
+
+Score d'éco-conduite contextualisé.
+
+Extension progressive à davantage de véhicules et de sources de données.
+
+3. Coût réel d'un trajet
+
+Le système doit distinguer :
+
+Énergie consommée : coût estimé de l'essence, du diesel, du GPL, de l'éthanol ou de l'électricité effectivement consommés.
+
+Dépenses immédiates : carburant acheté, recharge, péages et autres frais configurés.
+
+Coût total optimisé : dépenses pertinentes, énergie consommée et contraintes de temps, sans double comptage.
+
+Le coût de l'énergie consommée ne doit pas être confondu avec le montant payé à une station pendant le trajet.
+
+Le moteur doit comparer les itinéraires en prenant en compte la consommation prévue, le prix de l'énergie, les frais, les détours, les conditions de circulation et l'incertitude des estimations.
+
+Il ne doit pas attribuer arbitrairement une valeur monétaire au temps de l'utilisateur. En l'absence d'une telle préférence, le temps constitue une contrainte.
+
+4. Contrainte de temps et incertitude
+
+L'utilisateur définit le retard maximal acceptable par rapport au trajet le plus rapide, en pourcentage et en minutes.
+
+Le pourcentage représente un temps supplémentaire maximal par rapport à la durée de référence. Il ne doit pas être ajouté une seconde fois à la durée de référence pour créer une autre limite.
+
+La valeur initiale de 5 % est un paramètre de départ à tester, et non une garantie.
+
+Pour chaque itinéraire, le moteur doit pouvoir représenter :
+
+Une durée estimée.
+
+Une incertitude ou une plage de durée lorsque les données le permettent.
+
+La source et l'ancienneté des informations.
+
+Un niveau de confiance.
+
+Le système doit éviter de faire des choix sur la base de différences insignifiantes entre deux estimations.
+
+Il doit signaler lorsque le respect de la contrainte de temps est incertain, et éviter les changements d'itinéraire incessants grâce à un seuil minimal de gain et à une logique d'hystérésis.
+
+5. Principe de gratuité et d'indépendance
+
+Le projet doit privilégier une architecture qui ne nécessite aucun abonnement commercial obligatoire pour ses fonctions essentielles.
+
+Les solutions retenues doivent être évaluées selon :
+
+Le coût de licence.
+
+Le coût d'hébergement éventuel.
+
+Les quotas et limites d'utilisation.
+
+Les conditions d'utilisation commerciale.
+
+Les obligations d'attribution.
+
+Les restrictions de mise en cache et de redistribution.
+
+La possibilité d'auto-hébergement.
+
+La disponibilité d'une solution de remplacement.
+
+Une donnée ouverte ou un logiciel libre n'implique pas que les serveurs qui le distribuent soient gratuits ou utilisables sans restriction.
+
+Le projet doit donc séparer les données, le moteur de calcul, l'hébergement et l'interface utilisateur, afin de pouvoir changer de fournisseur sans réécrire l'application.
+
+Aucune clé API commerciale payante ne doit être indispensable au fonctionnement du moteur économique de base.
+
+6. Cartographie et routage
+6.1 Cartographie
+
+Privilégier OpenStreetMap comme source cartographique ouverte, sous réserve de respecter sa licence et les obligations d'attribution.
+
+Le moteur de rendu cartographique pourra utiliser MapLibre, après validation de l'architecture retenue.
+
+Attention : les données OpenStreetMap sont ouvertes, mais les serveurs de tuiles publics ne constituent pas une infrastructure gratuite garantie pour une application en production. Leur politique d'utilisation doit être respectée. Si nécessaire, prévoir un hébergement propre ou une solution compatible avec les objectifs de coût.
+
+6.2 Calcul des itinéraires
+
+Étudier les moteurs libres tels que Valhalla et GraphHopper, en comparant :
+
+Leur licence.
+
+Leur compatibilité avec les données OpenStreetMap.
+
+Le coût et la complexité de l'hébergement.
+
+Les possibilités hors ligne.
+
+La prise en charge des profils de véhicules.
+
+La facilité d'intégration des perturbations de circulation.
+
+La capacité à calculer plusieurs itinéraires alternatifs.
+
+Le moteur de routage fournit des itinéraires et des durées estimées. Le moteur économique reste indépendant et décide lequel est préférable.
+
+6.3 Aucun fournisseur unique imposé
+
+Le système doit exposer une interface commune pour le routage, afin de pouvoir remplacer ou compléter un moteur sans modifier les calculs économiques.
+
+7. Trafic routier : sources publiques prioritaires
+7.1 Source nationale principale
+
+Intégrer en priorité les jeux de données ouverts du Point d'Accès National transport.data.gouv.fr :
+
+Circulation en temps réel — réseau routier non concédé : vitesses moyennes, débits et états de circulation, notamment autour de certaines grandes agglomérations.
+
+Événements routiers — réseau routier non concédé : bouchons, chantiers, déviations, accidents et autres perturbations publiées.
+
+Références officielles :
+
+Circulation : https://transport.data.gouv.fr/datasets/etat-de-circulation-en-temps-reel-sur-le-reseau-national-routier-non-concede
+
+Événements : https://transport.data.gouv.fr/datasets/evenements-routiers-sur-le-reseau-routier-national-non-concede
+
+Catalogue : https://transport.data.gouv.fr/datasets
+
+Les données référencées sont proposées sous Licence Ouverte 2.0. La documentation et les conditions exactes de chaque ressource devront être vérifiées lors de l'implémentation.
+
+Les données agrégées de circulation sont actualisées toutes les six minutes. La fréquence des mesures individuelles et des flux d'événements varie selon la ressource.
+
+Limite majeure : ces jeux de données ne couvrent pas de façon exhaustive toutes les routes de France. Le trafic public disponible porte principalement sur le réseau routier principal et le réseau national non concédé. L'application ne doit donc jamais considérer que l'absence d'un événement signifie que la route est fluide.
+
+7.2 Sources locales complémentaires
+
+Prévoir des connecteurs optionnels pour les données ouvertes des métropoles, départements, collectivités et gestionnaires de voirie.
+
+Chaque source doit être enregistrée avec :
+
+Son territoire couvert.
+
+Le type de données fourni.
+
+Son format et son protocole.
+
+Sa licence.
+
+Sa fréquence de mise à jour.
+
+Son niveau de qualité.
+
+Sa date de dernière réception.
+
+Les connecteurs doivent être indépendants afin de pouvoir ajouter ou retirer une source sans modifier le moteur de routage.
+
+7.3 Pas de dépendance à une API commerciale
+
+TomTom, HERE et Google Maps Platform ne doivent pas être requis pour la première version.
+
+Ils pourront éventuellement servir à des comparaisons expérimentales, mais l'application doit rester fonctionnelle sans eux.
+
+8. Architecture de données de trafic
+
+Créer une interface indépendante des fournisseurs, par exemple TrafficProvider, permettant de récupérer et de normaliser les informations de circulation.
+
+Les données normalisées devront contenir, lorsque disponibles :
+
+Identifiant de la source.
+
+Segment routier ou zone concernée.
+
+Géométrie ou position.
+
+Sens de circulation.
+
+Vitesse observée et vitesse de référence, si disponibles.
+
+Type de perturbation.
+
+Durée estimée de l'événement, si connue.
+
+Heure d'observation.
+
+Heure de dernière mise à jour.
+
+Niveau de confiance ou indicateur de qualité.
+
+Les formats DATEX II, XML, JSON, CSV ou autres formats publiés devront être convertis vers un modèle interne commun.
+
+Le système doit gérer les erreurs de parsing, les données incomplètes, les doublons, les événements expirés et les décalages de date ou d'heure.
+
+Il doit respecter la fréquence de mise à jour et les conditions d'accès de chaque source.
+
+9. Détection des bouchons et recalcul économique
+
+Le recalcul doit être déclenché par un changement suffisamment significatif, et non à chaque nouvelle mesure.
+
+Fonctionnement attendu
+
+Détecter une perturbation ou une baisse de vitesse pertinente.
+
+Vérifier que la donnée est récente et correspond au trajet suivi.
+
+Estimer l'impact sur le temps restant.
+
+Générer ou mettre à jour des itinéraires alternatifs.
+
+Calculer le coût énergétique et les frais de chaque itinéraire.
+
+Comparer les durées estimées et leur incertitude.
+
+Vérifier la contrainte de temps supplémentaire.
+
+Proposer un changement uniquement si le gain est suffisamment important et fiable.
+
+Le moteur doit intégrer le coût énergétique du détour lui-même. Un itinéraire qui évite un bouchon mais impose un détour important n'est pas automatiquement préférable.
+
+Stabilité
+
+Prévoir :
+
+Un seuil minimal de gain en euros ou en temps, selon le contexte.
+
+Une hystérésis.
+
+Une temporisation raisonnable entre deux recalculs, sans empêcher une réaction rapide à un événement grave.
+
+Une explication compréhensible du changement proposé.
+
+Le système doit éviter les oscillations entre deux itinéraires presque équivalents.
+
+10. Mode dégradé et absence de trafic
+
+Le système doit fonctionner même lorsqu'aucune donnée de circulation n'est disponible.
+
+Il doit distinguer explicitement :
+
+Trafic connu et fluide.
+
+Trafic connu et perturbé.
+
+Trafic inconnu.
+
+Données trop anciennes.
+
+Source temporairement indisponible.
+
+En l'absence de trafic en temps réel, il peut utiliser les durées de référence du moteur de routage et les estimations historiques disponibles légalement, mais doit signaler leur nature.
+
+Il ne doit jamais assimiler « aucune donnée » à « aucun bouchon ».
+
+Si une source tombe en panne, l'application continue de fonctionner avec les données restantes, en abaissant le niveau de confiance lorsque nécessaire.
+
+11. Prix des carburants et de l'énergie
+
+Privilégier les données publiques françaises de prix des carburants, notamment le flux ouvert disponible depuis transport.data.gouv.fr, et vérifier la licence, la fréquence de mise à jour et la couverture des carburants utiles.
+
+Les prix doivent être horodatés. Le système doit identifier les prix périmés ou manquants et éviter d'afficher une estimation ancienne comme un prix garanti.
+
+Pour l'électricité, rechercher des données ouvertes sur les tarifs, les emplacements, les connecteurs et la disponibilité des bornes.
+
+La disponibilité d'une borne doit être traitée comme une information susceptible de changer entre la consultation et l'arrivée.
+
+Lorsque le prix ou la disponibilité est inconnu, le moteur doit le signaler et appliquer une stratégie de repli documentée.
+
+12. Profils de véhicules et consommation
+
+Chaque véhicule possède un profil spécifique comprenant les caractéristiques connues :
+
+Motorisation et énergies compatibles.
+
+Consommation selon le contexte, lorsqu'elle est disponible.
+
+Type de boîte de vitesses.
+
+Rapports de transmission connus, le cas échéant.
+
+Masse et caractéristiques utiles.
+
+Capacité du réservoir ou de la batterie.
+
+Paramètres de recharge pour les véhicules électriques.
+
+Données OBD-II réellement accessibles.
+
+Les paramètres inconnus doivent rester inconnus. Une donnée manquante ne doit jamais être remplacée silencieusement par zéro.
+
+Un modèle générique pourra être utilisé initialement, puis amélioré à partir des mesures du véhicule réel.
+
+13. OBD-II
+
+Utiliser l'OBD-II en lecture seule pour commencer.
+
+Les paramètres potentiellement disponibles comprennent la vitesse, le régime moteur, la position de la pédale, la charge moteur calculée et parfois le débit de carburant.
+
+La disponibilité dépend du véhicule et du calculateur. Le logiciel doit découvrir les données réellement prises en charge, et non supposer que tous les véhicules exposent les mêmes informations.
+
+La charge moteur calculée ne mesure pas directement la résistance aérodynamique ni la force aux roues.
+
+Aucune commande de modification du calculateur, du boîtier flexfuel ou des paramètres moteur ne doit être envoyée.
+
+14. Modèle de décélération
+
+Le modèle doit prédire le ralentissement du véhicule lorsque le conducteur relâche l'accélérateur.
+
+Il devra prendre en compte, selon les données disponibles :
+
+Vitesse initiale.
+
+Distance à parcourir.
+
+Pente.
+
+Rapport engagé.
+
+Régime moteur.
+
+Résistances au roulement et aérodynamiques.
+
+Vent estimé.
+
+Comportement réellement observé.
+
+Une décélération moyenne pourra servir de première approximation, mais le modèle devra pouvoir représenter une décélération variable.
+
+Le frein moteur dépend du régime, du rapport engagé et de la gestion moteur. Il ne faut pas supposer qu'il augmente systématiquement lorsque la vitesse baisse.
+
+Le modèle devra être calibré sur la Kia Rio 1.2 essence équipée du boîtier eFlexFuel SOT-3INDIR, sous réserve de la faisabilité de l'acquisition des données.
+
+Les données de calibration et de validation doivent provenir de trajets distincts. Les erreurs de prédiction devront être mesurées avant d'activer les conseils en conditions réelles.
+
+15. Anticipation, frein moteur et rétrogradage
+
+Le système pourra conseiller de relâcher l'accélérateur lorsqu'un ralentissement est prévisible.
+
+Il devra différencier :
+
+Le simple lever de pied.
+
+Le ralentissement par frein moteur dans le rapport actuel.
+
+Un éventuel rétrogradage.
+
+Le freinage normal nécessaire pour rester en sécurité.
+
+Rétrogradage conditionnel
+
+Le rétrogradage peut aider à ralentir sur une boîte manuelle lorsque le frein moteur est insuffisant, mais ne doit jamais être systématique.
+
+Un conseil précis nécessite des informations suffisamment fiables sur la vitesse, le rapport, le régime et les limites du véhicule. En l'absence de ces informations, le système doit s'abstenir de recommander un rapport précis.
+
+Il ne doit jamais conseiller un rétrogradage susceptible de provoquer un surrégime ou de déstabiliser le véhicule. Le frein moteur ne remplace jamais les freins de service.
+
+Le développement commencera en simulation. L'utilisation en circulation réelle sera conditionnée à une validation spécifique de sécurité.
+
+16. Pente, vent et météo
+
+La pente doit être estimée à partir de données d'altitude adaptées et filtrées. L'altitude GPS brute ne doit pas être utilisée sans précaution sur de courtes distances.
+
+Les données météo ouvertes ou librement accessibles peuvent compléter les estimations de vent. Leur licence, leurs limites d'utilisation et leur fréquence de mise à jour doivent être vérifiées.
+
+Le vent local peut différer des prévisions. Le système ne doit pas prétendre isoler le vent à partir de la seule charge moteur ou de la décélération.
+
+Le modèle doit conserver une incertitude résiduelle lorsque plusieurs facteurs peuvent expliquer une observation.
+
+17. Recharge électrique
+
+Pour les véhicules électriques et hybrides rechargeables, prendre en compte, selon les données disponibles :
+
+Consommation électrique.
+
+Tarifs de recharge.
+
+Puissance réellement accessible.
+
+Courbe de recharge du véhicule.
+
+Connecteurs et compatibilité.
+
+Frais fixes.
+
+Disponibilité et fraîcheur des informations.
+
+Réserve nécessaire pour atteindre une solution de repli.
+
+Les durées de recharge ne doivent pas être calculées à partir de la seule puissance maximale annoncée lorsque la courbe de charge est pertinente.
+
+18. Score d'éco-conduite
+
+Reporter le score global après validation des modules principaux.
+
+Les premières versions afficheront plutôt des indicateurs explicables : anticipation, fluidité, consommation estimée et qualité des données.
+
+Un score global devra définir clairement ses pondérations, ses critères de normalisation et le traitement des données manquantes. Il devra tenir compte du trafic, de la pente et des conditions de conduite afin de ne pas pénaliser injustement le conducteur.
+
+19. Sécurité et confidentialité
+
+La sécurité prime sur l'économie.
+
+L'application ne doit jamais garantir qu'un ralentissement suffira, imposer une vitesse dangereuse ou présenter une estimation comme certaine. Elle doit s'abstenir lorsque les informations sont insuffisantes.
+
+Elle doit limiter les distractions, privilégier des instructions courtes et laisser au conducteur la responsabilité de la conduite.
+
+Les trajets et données techniques doivent être protégés, avec stockage local privilégié, autorisations explicites, possibilité de supprimer et d'exporter les historiques et absence de transmission cachée.
+
+20. Architecture logicielle
+
+Les modules doivent être indépendants :
+
+Moteur économique.
+
+Routage.
+
+Cartographie.
+
+Fournisseurs de trafic.
+
+Prix de l'énergie.
+
+Profils de véhicules.
+
+OBD-II.
+
+Modèle de décélération.
+
+Conseils d'éco-conduite.
+
+Stockage et diagnostic.
+
+Interface utilisateur.
+
+Le système de trafic doit pouvoir changer de source sans imposer de modification au moteur économique.
+
+Le projet doit comprendre des tests unitaires, des tests d'intégration, des scénarios reproductibles et des tests de non-régression.
+
+Les clés d'accès et secrets éventuels ne doivent pas être intégrés au dépôt Git.
+
+21. Phasage du développement
+Phase 0 — Faisabilité et licences
+
+Vérifier les données publiques de circulation et leurs formats.
+
+Vérifier les données de prix des carburants.
+
+Examiner les sources locales disponibles.
+
+Comparer les moteurs de routage libres.
+
+Vérifier les conditions d'utilisation des cartes et des tuiles.
+
+Définir les coûts d'hébergement éventuels.
+
+Définir les scénarios de test et les critères d'acceptation.
+
+Livrable : architecture minimale, registre des risques et inventaire des sources ouvertes.
+
+Phase 1 — Simulateur économique
+
+Construire un moteur sans GPS réel, sans OBD-II et sans interface complexe.
+
+Tester les coûts, les détours, les limites de temps et les incertitudes.
+
+Livrable : moteur économique testable automatiquement.
+
+Phase 2 — Profils véhicule
+
+Ajouter les modèles énergétiques et les paramètres configurables.
+
+Livrable : comparaison de plusieurs véhicules et motorisations.
+
+Phase 3 — Acquisition réelle
+
+Vérifier les données OBD-II de la Kia Rio et constituer un jeu de données.
+
+Livrable : enregistreur de trajets et rapport de faisabilité.
+
+Phase 4 — Modèle de décélération
+
+Calibrer le modèle et le valider sur des trajets indépendants.
+
+Livrable : modèle documenté avec erreurs mesurées.
+
+Phase 5 — Navigation de base
+
+Intégrer OpenStreetMap, un moteur de routage et la localisation.
+
+Livrable : navigation fonctionnelle sans optimisation avancée.
+
+Phase 6 — Trafic public et recalcul
+
+Intégrer les flux nationaux de transport.data.gouv.fr et des sources locales compatibles.
+
+Associer les perturbations aux segments routiers, estimer leurs conséquences et recalculer les itinéraires lorsque le gain potentiel est significatif.
+
+Livrable : recalcul fonctionnel sur des scénarios réels et simulés, avec gestion explicite des zones sans données.
+
+Phase 7 — Prix et recharge
+
+Intégrer les sources ouvertes de prix et de recharge après vérification de leur qualité et de leurs conditions.
+
+Livrable : estimations économiques sourcées et horodatées.
+
+Phase 8 — Éco-conduite prédictive
+
+Ajouter les conseils de lever de pied et de ralentissement. Le rétrogradage restera en simulation jusqu'à validation de sécurité.
+
+Livrable : modèle évalué et conseils adaptés à la confiance disponible.
+
+Phase 9 — Score et extensions
+
+Ajouter un score contextualisé et étendre progressivement la couverture des véhicules et des sources.
+
+Livrable : score explicable et fonctionnalités avancées.
+
+22. Critères d'acceptation
+
+Le moteur économique doit produire des résultats reproductibles, distinguer les valeurs absentes des valeurs nulles et éviter les doubles comptages.
+
+Le moteur de trafic doit :
+
+Exploiter les sources configurées sans dépendance commerciale obligatoire.
+
+Identifier les données anciennes et les sources indisponibles.
+
+Ne pas confondre absence de données et circulation fluide.
+
+Associer correctement les événements aux routes concernées.
+
+Recalculer uniquement lorsque les conditions le justifient.
+
+Expliquer le gain attendu et son incertitude.
+
+Continuer à fonctionner sans trafic en temps réel.
+
+Le modèle de décélération doit être validé sur des trajets indépendants. Les conseils de conduite doivent s'abstenir lorsque la confiance est insuffisante.
+
+Chaque phase doit posséder ses propres tests et critères de réussite.
+
+23. Première mission de développement
+
+La première mission consiste à :
+
+Lire et résumer ce cahier des charges.
+
+Proposer une architecture minimale et justifiée.
+
+Construire le simulateur économique.
+
+Définir les unités et les modèles de données.
+
+Implémenter les contraintes de temps et les incertitudes.
+
+Créer des scénarios de test reproductibles.
+
+Documenter les hypothèses et les limites.
+
+Fournir les commandes permettant d'exécuter les tests localement.
+
+Préparer le projet pour Git et un dépôt privé.
+
+Ne pas commencer le GPS, le trafic réel ou le score tant que le simulateur n'a pas satisfait les critères de la phase 1.
+
+24. Gestion du code
+
+Le projet reste local pour le développement et les tests, avec un dépôt Git privé pour l'historique et les sauvegardes.
+
+Chaque livraison doit inclure les changements, les tests exécutés, les limites connues et les instructions de lancement.
+
+Les agents de développement peuvent relire le code les uns des autres, mais ne doivent pas modifier simultanément les mêmes fichiers sans coordination.
+
+Aucune fonctionnalité ne sera déclarée terminée sur le seul fait que le code compile : les critères d'acceptation doivent être respectés.
+
+Décision directrice
+
+Le projet doit démontrer d'abord qu'il sait choisir un trajet moins coûteux, puis intégrer la navigation et les données publiques de circulation.
+
+La stratégie de trafic est désormais : données ouvertes nationales en priorité, flux locaux en complément, absence de dépendance obligatoire à une API commerciale et fonctionnement explicite en mode dégradé.
+
+La gratuité doit être recherchée à chaque niveau — données, logiciels, hébergement et cartes — sans supposer qu'un service tiers gratuit aujourd'hui le restera éternellement.
