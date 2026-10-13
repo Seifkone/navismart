@@ -38,3 +38,24 @@ PASS configurable scenario preserves unknown fees and unquantified uncertainty
 PASS configured timestamp is the observation date, not import time
 PASS dated quote without a source lifetime stays conditional
 PASS: 39 acceptance scenarios
+PASS empty catalog is explicit
+PASS profile round trip keeps unicode, units, uncertainty and provenance
+PASS all supported powertrains survive storage
+PASS missing fields remain unknown and zero stock remains known
+PASS duplicate ids and unknown active vehicle rejected
+PASS adding editing and selection preserve other profiles
+PASS removal selects a remaining profile and last removal empties selection
+PASS stale or undated stock never becomes a full tank
+PASS stock date boundary is inclusive and future dates invalidated
+PASS stored external price ages using its observation timestamp
+PASS vehicle comparison uses distinct units and consumption
+PASS profile policy retained in comparison
+PASS hybrid without route energy split remains uncertain
+PASS incompatible powertrain and energy rejected
+PASS unknown gear and mass are not invented
+PASS unsupported version and corrupt content do not reset saved data
+PASS duplicate persistence fields rejected
+PASS invalid observation date is a controlled format error
+PASS observation lifetimes can be set by the calling adapter
+PASS empty name and nonfinite consumption rejected
+PASS: 20 vehicle profile scenarios

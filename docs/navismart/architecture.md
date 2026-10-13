@@ -115,3 +115,31 @@ Les anciens fichiers Kotlin et leur clé commerciale restent hors du fork publi�
 Le prochain raccordement logiciel sera un adaptateur des trajets CoMaps et un écran de
 profils véhicule, suivi des connecteurs gouvernementaux avec cache local. L’OBD-II et
 les conseils de rétrogradage resteront conditionnés aux données et essais réels.
+
+## Deuxième jalon — profils et aperçu Android
+
+`VehicleProfiles` ajoute un catalogue immutable, un véhicule actif, les caractéristiques
+mécaniques connues et une observation datée du niveau d’énergie. `ProfileCodec` assure
+la sauvegarde versionnée avec conservation des états, intervalles et sources.
+L’API `Validity` permet de régler les durées de validité des stocks, consommations et prix.
+
+`VehicleProfileRepository` stocke le catalogue dans les préférences privées Android.
+Les règles de sauvegarde CoMaps existantes n’incluent pas ces préférences. L’éditeur
+initial gère ajout, modification et sélection ; il ne propose pas encore suppression,
+import/export ou édition de plusieurs réservoirs thermiques pour le même véhicule.
+
+`CoMapsEconomyAdapter` crée un tronçon à partir de `RoutingInfo.distToTarget` et
+`totalTimeInSeconds`, sans appel distant. La conversion respecte mètres, kilomètres,
+pieds et miles. Les chiffres de distance CoMaps peuvent être arrondis ; l’adaptateur
+ne leur attribue donc pas des bornes exactes. Les tarifs de péages et autres frais
+restent inconnus. L’aperçu affiche uniquement le coût de l’énergie consommée avec
+son caractère conditionnel et la faisabilité du stock renseigné.
+
+Les réglages intègrent la bibliothèque économique ; ils ne changent pas la route
+ni le guidage. Le prochain raccordement sera la production de vrais candidats et
+la prise en compte des détours vers les stations. Les prix publics, le cache et les
+perturbations routières viendront avec des adaptateurs séparés.
+
+La version 2.1.5 de `desugar_jdk_libs`, déjà utilisée par CoMaps, couvre `Stream.toList()`
+pour les anciens Android selon son [journal officiel](https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md).
+Le module reste compilé en Java 17 ; la chaîne Android utilise Java 21.
