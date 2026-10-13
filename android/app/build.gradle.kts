@@ -193,7 +193,7 @@ android {
         getByName("debug") {
             storeFile = project.projectDir.resolve(File(comapsDebugKeystorePath))
             storePassword = "12345678"
-            keyAlias = "$appName Debug"
+            keyAlias = "CoMaps Debug" // Alias in the existing public development keystore.
             keyPassword = "12345678"
         }
         create("test") {
