@@ -11,6 +11,14 @@
     tools:summary="LongLongUsernameHere" />
 
   <PreferenceScreen
+    android:key="navismart_vehicles"
+    android:title="@string/navismart_vehicles_title"
+    android:summary="@string/navismart_vehicles_summary"
+    app:fragment="app.organicmaps.settings.VehicleSettingsFragment"
+    app:icon="@drawable/ic_car_enabled"
+    app:singleLineTitle="false" />
+
+  <PreferenceScreen
       android:key="pref_screen_nav"
       android:title="@string/prefs_group_route"
       app:fragment="app.organicmaps.settings.NavigationSettingsFragment"

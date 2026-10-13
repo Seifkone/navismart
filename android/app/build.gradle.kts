@@ -31,8 +31,8 @@ java {
     }
 }
 
-val appName = "CoMaps"
-val appId = "app.comaps"
+val appName = "NaviSmart"
+val appId = "app.navismart"
 // These are properly set in the 'secure.properties.*' files but must be declared here for build sync to succeed.
 project.ext["secretTestStoreFile"] = "comaps-test.keystore"
 project.ext["secretTestStorePassword"] = ""
@@ -358,6 +358,7 @@ androidComponents {
 
 dependencies {
     implementation(project(":sdk"))
+    implementation(project(":economy"))
     coreLibraryDesugaring(libs.android.tools.desugar)
 
     // Google Play Location Services

@@ -19,3 +19,5 @@ dependencyResolutionManagement {
 rootProject.name = "CoMaps"
 include(":app")
 include(":sdk")
+include(":economy")
+project(":economy").projectDir = file("../navismart/economy")

@@ -1,6 +1,11 @@
 [CmdletBinding()]
-param([ValidateSet('Test', 'Simulate')][string]$Mode = 'Test', [string]$Scenario)
+param([ValidateSet('Test', 'Simulate')][string]$Mode = 'Test', [string]$Scenario,
+      [string]$Profiles, [string]$Vehicle, [string]$At)
 $ErrorActionPreference = 'Stop'
+if (($Profiles -or $Vehicle -or $At) -and ($Mode -ne 'Simulate' -or -not $Scenario)) {
+  throw '-Profiles, -Vehicle and -At require -Mode Simulate and -Scenario'
+}
+if ($Vehicle -and -not $Profiles) { throw '-Vehicle requires -Profiles' }
 $navismartRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $navismartModule = Join-Path $navismartRoot 'navismart/economy'
 $navismartOutput = Join-Path $navismartRoot 'out/navismart/economy'
@@ -24,5 +29,8 @@ if ($Scenario) {
   if ($Mode -ne 'Simulate') { throw '-Scenario requires -Mode Simulate' }
   $navismartRunArgs += @('--scenario', (Resolve-Path -LiteralPath $Scenario).Path)
 }
+if ($Profiles) { $navismartRunArgs += @('--profiles', (Resolve-Path -LiteralPath $Profiles).Path) }
+if ($Vehicle) { $navismartRunArgs += @('--vehicle', $Vehicle) }
+if ($At) { $navismartRunArgs += @('--at', $At) }
 & $navismartJava @navismartRunArgs
 if ($LASTEXITCODE -ne 0) { throw 'NaviSmart execution failed' }

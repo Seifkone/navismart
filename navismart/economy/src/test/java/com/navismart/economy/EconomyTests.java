@@ -235,6 +235,7 @@ public final class EconomyTests
       equal(Estimate.State.UNKNOWN, scenario.vehicle().stores().get(0).referencePrice().state());
     });
     System.out.println("PASS: " + passed + " acceptance scenarios");
+    ProfileTests.run();
   }
 
   private static Vehicle hybrid()

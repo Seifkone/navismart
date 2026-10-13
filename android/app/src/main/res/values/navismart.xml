@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="navismart_vehicles_title">NaviSmart · Vehicles</string>
+  <string name="navismart_vehicles_summary">Vehicle profiles, energy consumption and time allowance</string>
+  <string name="navismart_profile_notice">Leave unknown values blank. Consumption uses units per 100 km. These manual estimates do not calibrate your vehicle or change route selection yet. For hybrids, energy use must be split explicitly for each route segment.</string>
+  <string name="navismart_active_vehicle">Active vehicle</string>
+  <string name="navismart_add_vehicle">Add a vehicle</string>
+  <string name="navismart_new_vehicle">My vehicle</string>
+  <string name="navismart_edit_vehicle">Vehicle profile</string>
+  <string name="navismart_powertrain">Powertrain</string>
+  <string name="navismart_name">Vehicle name</string>
+  <string name="navismart_mass">Mass (kg, optional)</string>
+  <string name="navismart_gearbox">Gearbox</string>
+  <string name="navismart_energy">Energy</string>
+  <string name="navismart_unit_kwh">Battery: usable kWh; price in €/usable kWh, including known charging losses.</string>
+  <string name="navismart_unit_litres">Fuel tank: litres; price in €/litre. Flexfuel estimates must match the actual mixture.</string>
+  <string name="navismart_capacity">Capacity</string>
+  <string name="navismart_stock">Current level</string>
+  <string name="navismart_reserve">Minimum reserve</string>
+  <string name="navismart_consumption">Average consumption / 100 km</string>
+  <string name="navismart_price">Reference acquisition price of stored energy</string>
+  <string name="navismart_lower">Lower bound (optional)</string>
+  <string name="navismart_upper">Upper bound (optional)</string>
+  <string name="navismart_confirm_stock">I confirm the current level of every tank and battery</string>
+  <string name="navismart_stock_notice">A level expires after 24 hours. Refresh it before a trip: intervening travel is not tracked by this module.</string>
+  <string name="navismart_stock_confirmation_required">Confirm the current energy levels before saving a changed level.</string>
+  <string name="navismart_confirm_fuel">Consumption and price match the selected fuel</string>
+  <string name="navismart_extra_time">Maximum extra time (%)</string>
+  <string name="navismart_minimum_gain">Minimum saving (€)</string>
+  <string name="navismart_switch_penalty">Route change penalty (€)</string>
+  <string name="navismart_save">Save</string>
+  <string name="navismart_storage_error">Vehicle profiles could not be read or saved. Existing data has been kept; try opening this screen again.</string>
+  <string name="navismart_invalid_profile">Check the name, non-negative numbers, both bounds around each estimate, capacity and fuel confirmation. Time and saving limits are required.</string>
+  <string-array name="navismart_powertrains">
+    <item>Combustion (petrol, diesel, LPG)</item><item>Flexfuel</item><item>Hybrid</item><item>Plug-in hybrid</item><item>Electric</item>
+  </string-array>
+  <string-array name="navismart_energies">
+    <item>SP95-E10</item><item>SP95</item><item>SP98</item><item>Diesel</item><item>E85</item><item>LPG</item><item>Electricity</item>
+  </string-array>
+  <string-array name="navismart_gearboxes">
+    <item>Unknown</item><item>Manual</item><item>Automatic</item><item>CVT</item>
+  </string-array>
+</resources>

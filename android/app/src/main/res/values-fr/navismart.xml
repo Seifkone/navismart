@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="navismart_vehicles_title">NaviSmart · Véhicules</string>
+  <string name="navismart_vehicles_summary">Profils véhicule, consommation et retard autorisé</string>
+  <string name="navismart_profile_notice">Laisser vides les valeurs inconnues. La consommation est exprimée par 100 km. Ces estimations manuelles ne calibrent pas le véhicule et ne modifient pas encore le choix du trajet. Pour les hybrides, la répartition des énergies doit être fournie pour chaque tronçon.</string>
+  <string name="navismart_active_vehicle">Véhicule actif</string>
+  <string name="navismart_add_vehicle">Ajouter un véhicule</string>
+  <string name="navismart_new_vehicle">Mon véhicule</string>
+  <string name="navismart_edit_vehicle">Profil véhicule</string>
+  <string name="navismart_powertrain">Motorisation</string>
+  <string name="navismart_name">Nom du véhicule</string>
+  <string name="navismart_mass">Masse (kg, facultatif)</string>
+  <string name="navismart_gearbox">Boîte de vitesses</string>
+  <string name="navismart_energy">Énergie</string>
+  <string name="navismart_unit_kwh">Batterie : kWh utilisables ; prix en €/kWh utilisable, pertes de recharge connues incluses.</string>
+  <string name="navismart_unit_litres">Réservoir : litres ; prix en €/litre. En flexfuel, les estimations doivent correspondre au mélange réel.</string>
+  <string name="navismart_capacity">Capacité</string>
+  <string name="navismart_stock">Niveau actuel</string>
+  <string name="navismart_reserve">Réserve minimale</string>
+  <string name="navismart_consumption">Consommation moyenne / 100 km</string>
+  <string name="navismart_price">Prix de référence de l’énergie déjà stockée</string>
+  <string name="navismart_lower">Borne basse (facultatif)</string>
+  <string name="navismart_upper">Borne haute (facultatif)</string>
+  <string name="navismart_confirm_stock">Je confirme le niveau actuel de chaque réservoir et batterie</string>
+  <string name="navismart_stock_notice">Un niveau expire après 24 heures. Le confirmer avant un trajet : ce module ne suit pas les déplacements intervenus entre-temps.</string>
+  <string name="navismart_stock_confirmation_required">Confirmer les niveaux actuels avant de sauvegarder un niveau modifié.</string>
+  <string name="navismart_confirm_fuel">La consommation et le prix correspondent au carburant sélectionné</string>
+  <string name="navismart_extra_time">Retard maximal (%)</string>
+  <string name="navismart_minimum_gain">Gain minimal (€)</string>
+  <string name="navismart_switch_penalty">Pénalité de changement de trajet (€)</string>
+  <string name="navismart_save">Enregistrer</string>
+  <string name="navismart_storage_error">Lecture ou sauvegarde des profils impossible. Les données existantes sont conservées ; essayer de rouvrir cet écran.</string>
+  <string name="navismart_invalid_profile">Vérifier le nom, les nombres positifs ou nuls, les deux bornes autour des estimations, la capacité et la confirmation du carburant. Les limites de temps et de gain sont obligatoires.</string>
+  <string-array name="navismart_powertrains">
+    <item>Thermique (essence, diesel, GPL)</item><item>Flexfuel</item><item>Hybride</item><item>Hybride rechargeable</item><item>Électrique</item>
+  </string-array>
+  <string-array name="navismart_energies">
+    <item>SP95-E10</item><item>SP95</item><item>SP98</item><item>Gazole</item><item>E85</item><item>GPL</item><item>Électricité</item>
+  </string-array>
+  <string-array name="navismart_gearboxes">
+    <item>Inconnue</item><item>Manuelle</item><item>Automatique</item><item>CVT</item>
+  </string-array>
+</resources>
