@@ -65,6 +65,34 @@ sur téléphone, trafic réel, OBD-II ou conseil prédictif n’est attesté par
 
 ## APK de développement
 
+### Version du 14 octobre 2026
+
+Le [workflow `8d49213` réussi](https://github.com/Seifkone/navismart/actions/runs/38601501687)
+fournit [l’artefact Android](https://github.com/Seifkone/navismart/actions/runs/38601501687/artifacts/11913759862).
+Il contient `NaviSmart-26101405-fdroid-debug.apk` (148 560 286 octets).
+Le contrôle du module et les seize tests Android se sont terminés avec succès.
+Le workflow indépendant du même commit valide aussi les onze tests Python.
+Le total est de 137 scénarios automatisés : 110 Java, 16 Android et 11 Python.
+
+Contrôles sur l’APK téléchargé, avec Android Build Tools 36 :
+
+- Identifiant : `app.navismart.fdroid.debug` ; nom : `NaviSmart Debug`.
+- Version : `2026.10.14-5-FDroid-debug` ; code : `26101405`.
+- Architecture `arm64-v8a`, Android minimal API 21 et cible API 36.
+- Signature vérifiée, schémas v1 et v2, même certificat public de développement
+  que la version précédente. `apksigner` émet les avertissements usuels pour
+  des métadonnées de dépendances sous `META-INF` ; le contrôle cryptographique réussit.
+- SHA-256 : `986af156f40e81e6082122694858c6d58d70da2fd676b8d727f9e6f52a96421a`.
+- Manifeste : service OBD non exporté, type `connectedDevice`, arrêt avec la tâche,
+  permissions `BLUETOOTH_CONNECT` et `FOREGROUND_SERVICE_CONNECTED_DEVICE` présentes.
+
+Cet APK inclut les stations, la comparaison de l’arrêt choisi, les avis routiers,
+les transferts de profils et la collecte OBD pendant le guidage. La récupération
+automatique des tarifs de péage n’y figure pas. Les essais réels sur appareil
+restent à faire.
+
+### Version du 13 octobre 2026
+
 Le [workflow Android réussi](https://github.com/Seifkone/navismart/actions/runs/38463027554)
 fournit l’archive `navismart-android-arm64-debug`, conservée 14 jours par GitHub.
 Elle contient `NaviSmart-26101306-fdroid-debug.apk` (148 426 649 octets).
