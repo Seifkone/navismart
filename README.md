@@ -1,3 +1,40 @@
+# NaviSmart — fork de développement
+
+GPS fondé sur CoMaps : cartes, recherche, calcul d’itinéraires et guidage embarqués.
+Les régions doivent être téléchargées avant utilisation hors ligne. Le module
+économique est indépendant du moteur cartographique et ne requiert aucune API
+de routage distante.
+
+Fonctions ajoutées sur la branche `navismart` :
+
+- Profils véhicules, unités thermiques/électriques, réserves, coûts FIFO et budget temps.
+- Prix gouvernementaux, ruptures, cache privé et ajout d’une station comme étape.
+- Comparaison conditionnelle du trajet initial et d’un arrêt choisi, avec distances
+  routières réelles, quantité achetée, frais et durée d’arrêt explicites.
+- Avis Bison Futé avec dates et couverture partielle, consultables depuis le cache.
+- OBD standard Bluetooth classique, collecte explicite pendant le guidage, arrêt
+  par notification et export CSV local.
+- Sauvegarde/restauration des profils et outil local de contrôle des journaux OBD.
+
+[APK Android de développement et contrôles](https://github.com/Seifkone/navismart/actions/workflows/navismart-android.yml)
+→ ouvrir une exécution réussie puis l’artefact `navismart-android-arm64-debug`.
+Les artefacts sont conservés quatorze jours. Les fonctions sont dans les réglages NaviSmart.
+
+Le cahier des charges reste en cours : génération automatique de plusieurs détours,
+appariement du trafic au réseau, récupération automatique des tarifs de péage et
+calibration physique ne sont pas achevés. Aucun
+gain réel ni conseil précis de conduite n’est validé sans les mesures et essais nécessaires.
+
+Documents : [architecture](docs/navismart/architecture.md),
+[cahier des charges](docs/navismart/cahier-des-charges-v2.1.txt),
+[validation](docs/navismart/validation.md), [essais sur appareil](docs/navismart/device-validation.md),
+[carburants et OBD](docs/navismart/fuel-and-obd.md), [avis routiers](docs/navismart/traffic-events.md),
+[analyse des sessions](docs/navismart/obd-session-review.md),
+[tarifs de péage](docs/navismart/toll-prices.md),
+[intégration des mises à jour CoMaps](docs/navismart/upstream-sync.md).
+
+---
+
 <!-- Navigation Bar -->
 <p align="center">
   <a href="https://codeberg.org/comaps#comaps">Project Intro</a> |

@@ -43,6 +43,10 @@ qui ne fournit pas assez d’informations.
 
 ## Données encore manquantes
 
+La recherche sur les péages et les limites des jeux publiés sont détaillées dans
+[prix des péages](toll-prices.md). Les barèmes officiels peuvent alimenter un
+catalogue local ; leur identification sur la route reste à implémenter.
+
 Tarifs de péages par trajet, tarifs dynamiques de recharge et disponibilité des bornes,
 paramètres OBD réellement accessibles, rapports de transmission, régime maximal et jeux
 de conduite indépendants ne sont pas encore acquis. Le simulateur accepte des valeurs
