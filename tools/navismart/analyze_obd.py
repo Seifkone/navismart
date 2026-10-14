@@ -42,7 +42,7 @@ def read_session(path: Path) -> tuple[list[Sample], str]:
         raw = stream.read(MAX_BYTES + 1)
     if len(raw) > MAX_BYTES:
         raise ValueError("Session exceeds the size limit")
-    reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig", errors="strict"), newline=""))
+    reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig", errors="strict"), newline=""), strict=True)
     if reader.fieldnames != HEADER:
         raise ValueError("Unsupported CSV header; export a NaviSmart schema-1 session")
     samples: list[Sample] = []
@@ -60,7 +60,7 @@ def read_session(path: Path) -> tuple[list[Sample], str]:
         if utc.tzinfo is None or utc.utcoffset() != timedelta(0):
             raise ValueError("An explicit UTC timestamp is required")
         elapsed = int(row["elapsed_ms"])
-        if elapsed < 0 or (samples and elapsed < samples[-1].elapsed_ms):
+        if not 0 <= elapsed <= 2**63 - 1 or (samples and elapsed < samples[-1].elapsed_ms):
             raise ValueError("Session monotonic time moves backwards")
         if signal in latest_by_signal and elapsed <= latest_by_signal[signal]:
             raise ValueError("Duplicate or backwards time for a sensor")

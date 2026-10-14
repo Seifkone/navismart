@@ -2,9 +2,9 @@
 
 ## Travaux du 14 octobre 2026
 
-- 105 scénarios Java indépendants réussis : 39 économie, 20 profils, 17 carburants,
-  13 protocoles OBD, quatre cycles de collecte, huit événements routiers et quatre
-  transferts de profils.
+- 110 scénarios Java indépendants réussis : 39 économie, 20 profils, 18 carburants,
+  13 protocoles OBD, quatre cycles de collecte, quatre scénarios d’ordonnancement,
+  huit événements routiers et quatre transferts de profils.
 - Vérification Gradle indépendante réussie avec Java 17 ; le premier essai sous
   bac à sable ne pouvait pas joindre son propre processus Gradle sur localhost.
   Le même contrôle avec les permissions locales nécessaires est réussi.

@@ -130,7 +130,7 @@ public final class FuelSettingsFragment extends BaseXmlSettingsFragment
         && match.price().state() != com.navismart.economy.Estimate.State.INVALID
         && match.availability() != FuelData.Availability.CLOSED && match.availability() != FuelData.Availability.OUTAGE)
       dialog.setNeutralButton(R.string.navismart_add_fuel_stop, (d,w) -> {
-        app.organicmaps.navismart.FuelStopComparison.capture(station, mEnergy, mSnapshot.receivedAt());
+        app.organicmaps.navismart.FuelStopComparison.capture(station, mEnergy, match.sourceReceivedAt());
         var object = MapObject.createMapObject(FeatureId.EMPTY, MapObject.POI, station.label(), "", station.point().latitude(), station.point().longitude());
         routing.addStop(object); requireActivity().finish();
       });

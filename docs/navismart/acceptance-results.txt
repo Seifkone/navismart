@@ -74,9 +74,10 @@ PASS external entities internal DTD and unexpected roots rejected
 PASS ZIP with XML and non-UTF8 declaration parsed without guessing charset
 PASS geographical shortlist is deterministic and not a road route
 PASS refuel plans respect reachability capacity and time
+PASS station selection retains its original snapshot date during a refresh
 PASS discarded ZIP entries cannot bypass decompression limit
 PASS reachable partial purchase keeps consumed and purchased costs separate
-PASS: 17 fuel and refuelling scenarios
+PASS: 18 fuel and refuelling scenarios
 PASS OBD RPM example matches ELM datasheet
 PASS zero RPM is a measurement, not missing data
 PASS negative temperatures and trims are retained
@@ -110,3 +111,8 @@ PASS recording snapshots are immutable and out-of-order samples rejected
 PASS stop retains historical values and rejects late callbacks
 PASS replacement session discards previous data and terminal states remain terminal
 PASS: 4 OBD recording lifecycle scenarios
+PASS motion sensors have deterministic priority
+PASS slower diagnostics are sampled fairly between motion rounds
+PASS limited vehicles only request supported sensors
+PASS empty support and backwards scheduler time rejected
+PASS: 4 OBD poll scheduling scenarios

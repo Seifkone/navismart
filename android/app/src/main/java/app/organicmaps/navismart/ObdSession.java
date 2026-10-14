@@ -9,6 +9,7 @@ import com.navismart.obd.ElmChannel;
 import com.navismart.obd.ObdCsv;
 import com.navismart.obd.ObdProtocol;
 import com.navismart.obd.ObdRecordingState.Status;
+import com.navismart.obd.ObdPollSchedule;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +84,7 @@ public final class ObdSession implements AutoCloseable
         long sessionLimit = Math.min(5L * 1024 * 1024, 50L * 1024 * 1024 - size);
         File file = new File(mDirectory, "obd-" + UUID.randomUUID() + ".csv");
         long started = SystemClock.elapsedRealtime();
+        var schedule = new ObdPollSchedule(signals);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)))
         {
           synchronized (mLogLock)
@@ -93,23 +95,20 @@ public final class ObdSession implements AutoCloseable
           mListener.status(Status.READING);
           while (!mClosed)
           {
-            for (var signal : signals)
+            long requestStarted = SystemClock.elapsedRealtime();
+            if (requestStarted - started >= 60 * 60 * 1000L || file.length() + 1024 >= sessionLimit)
+            { mListener.status(Status.LIMIT_REACHED); return; }
+            var signal = schedule.next(requestStarted - started);
+            String reply = channel.request(signal.command(), 5000, () -> mClosed);
+            var sample = ObdProtocol.decode(signal, reply, Instant.now(), SystemClock.elapsedRealtime() - started);
+            synchronized (mLogLock)
             {
               if (mClosed) break;
-              if (file.length() + 1024 >= sessionLimit) { mListener.status(Status.LIMIT_REACHED); return; }
-              String reply = channel.request(signal.command(), 5000, () -> mClosed);
-              var sample = ObdProtocol.decode(signal, reply, Instant.now(), SystemClock.elapsedRealtime() - started);
-              synchronized (mLogLock)
-              {
-                if (mClosed) break;
-                ObdCsv.write(writer, sample); writer.flush();
-              }
-              mListener.sample(sample);
-              // Conservative rate for unknown adapters: at most 5 requests/sec, usually less.
-              Thread.sleep(200);
+              ObdCsv.write(writer, sample); writer.flush();
             }
-            if (SystemClock.elapsedRealtime() - started >= 60 * 60 * 1000L || file.length() >= sessionLimit)
-            { mListener.status(Status.LIMIT_REACHED); return; }
+            mListener.sample(sample);
+            // At most five requests/sec; response time already counts in that interval.
+            Thread.sleep(Math.max(1, 200 - (SystemClock.elapsedRealtime() - requestStarted)));
           }
         }
         mListener.status(Status.STOPPED);

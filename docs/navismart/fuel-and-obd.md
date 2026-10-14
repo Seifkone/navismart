@@ -62,6 +62,12 @@ n’est pas converti en litres. Le débit d’air n’est pas converti en consom
 par un rapport air/carburant fixe. Un débit déclaré n’est pas une calibration
 physique validée.
 
+L’ordonnanceur donne priorité au régime, à la vitesse, au papillon et au débit de
+carburant annoncés. Les autres capteurs passent à tour de rôle entre ces lectures,
+au plus une lecture lente toutes les deux secondes. La cadence globale est limitée
+à cinq requêtes par seconde et inclut le temps de réponse ; aucune fréquence effective
+n’est promise pour une prise non testée. Chaque mesure conserve son propre temps.
+
 La collecte démarre explicitement dans l’écran OBD puis continue pendant le guidage
 via un service Android `connectedDevice`. Une notification propose l’arrêt ; si
 les notifications sont refusées, l’arrêt reste accessible dans l’écran OBD et les

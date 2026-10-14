@@ -72,7 +72,7 @@ class ObdAnalysisTests(unittest.TestCase):
             analyzer.analyze(self.session([self.row(value="1", state="UNAVAILABLE")]))
 
     def test_backward_monotonic_time_and_duplicates_rejected(self):
-        for rows in [[self.row(elapsed=2), self.row(elapsed=1)], [self.row(), self.row()]]:
+        for rows in [[self.row(elapsed=2), self.row(elapsed=1)], [self.row(), self.row()], [self.row(elapsed=2**63)]]:
             with self.assertRaises(ValueError):
                 analyzer.analyze(self.session(rows))
 
@@ -108,6 +108,9 @@ class ObdAnalysisTests(unittest.TestCase):
             analyzer.analyze(path)
         with self.assertRaises(ValueError):
             analyzer.analyze(self.session([self.row(utc="2026-10-14T12:00:00")]))
+        path = self.session([self.row()]); path.write_bytes(path.read_bytes().replace(b"AVAILABLE", b'"AVAILABLE'))
+        with self.assertRaises(csv.Error):
+            analyzer.analyze(path)
 
     def test_cli_refuses_overwriting_sources_and_existing_reports(self):
         path = self.session([self.row()]); original = path.read_bytes()

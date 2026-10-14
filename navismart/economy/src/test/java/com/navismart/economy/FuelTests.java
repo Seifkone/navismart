@@ -96,6 +96,13 @@ public final class FuelTests
       equal(0, result.affordablePlans().size());
       equal(EconomyEngine.Choice.NO_FEASIBLE_ROUTE, result.decision().choice());
     });
+    test("station selection retains its original snapshot date during a refresh", () -> {
+      var snapshot = parse(xml("<prix id='3' maj='2026-10-14 11:00:00' valeur='1.2'/>"));
+      var original = StationSearch.nearby(snapshot, new Point(48.12345, 2.12345), Energy.E85, NOW, 10, 10, Duration.ofDays(7)).get(0);
+      var refreshed = new Snapshot(NOW.plusSeconds(600), snapshot.stations(), 0);
+      equal(NOW, original.sourceReceivedAt()); equal(NOW.plusSeconds(600), refreshed.receivedAt());
+      equal(Availability.UNKNOWN, original.station().availability(Energy.E85, NOW.plusSeconds(1801), original.sourceReceivedAt(), Duration.ofMinutes(30)));
+    });
     test("discarded ZIP entries cannot bypass decompression limit", () -> {
       try
       {

@@ -12,6 +12,7 @@ concurrency:
 env:
   JAVA_HOME: /usr/lib/jvm/temurin-21-jdk-amd64
   SKIP_MAP_DOWNLOAD: true
+  CCACHE_COMPILERCHECK: content
 jobs:
   apk:
     runs-on: ubuntu-24.04

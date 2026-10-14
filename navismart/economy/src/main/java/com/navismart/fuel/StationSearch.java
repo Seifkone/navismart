@@ -12,7 +12,8 @@ import java.util.List;
 public final class StationSearch
 {
   private StationSearch() {}
-  public record Match(Station station, Estimate price, Availability availability, double straightLineKm) {}
+  public record Match(Station station, Estimate price, Availability availability, double straightLineKm,
+                      Instant sourceReceivedAt) {}
   public static List<Match> nearby(Snapshot snapshot, Point origin, Energy energy, Instant now,
                                    double radiusKm, int limit, Duration priceAge)
   {
@@ -20,7 +21,7 @@ public final class StationSearch
       throw new IllegalArgumentException("Invalid station search limits");
     return snapshot.stations().stream().filter(s -> s.point() != null)
         .map(s -> new Match(s, s.price(energy, now, priceAge), s.availability(energy, now, snapshot.receivedAt(),
-                                        Duration.ofMinutes(30)), origin.distanceKm(s.point())))
+                                        Duration.ofMinutes(30)), origin.distanceKm(s.point()), snapshot.receivedAt()))
         .filter(m -> m.straightLineKm() <= radiusKm && m.price().expected() != null)
         .sorted(Comparator.comparingInt((Match m) -> m.availability() == Availability.CLOSED || m.availability() == Availability.OUTAGE ? 1 : 0)
             .thenComparingInt(m -> m.price().isFresh() ? 0 : 1)
