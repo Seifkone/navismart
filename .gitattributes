@@ -44,3 +44,5 @@
 *.slf     binary
 *.borders binary
 *.pdf     binary
+android/app/src/main/assets/navismart-tolls/*.csv -text
+android/app/src/main/assets/navismart-tolls/manifest.json text eol=lf

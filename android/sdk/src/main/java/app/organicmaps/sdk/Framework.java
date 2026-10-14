@@ -222,6 +222,9 @@ public class Framework
   @Nullable
   public static native double[] nativeGetRouteLegMetrics();
 
+  /** -1 if invalid; bit 0: mapped toll road, bit 1: mapped ferry. Planning snapshot only. */
+  public static native int nativeGetRouteFeeFlags();
+
   @Nullable
   /// @param[in] maxDistM Max distance between points in meters.
   public static native JunctionInfo[] nativeGetRouteJunctionPoints(double maxDistM);

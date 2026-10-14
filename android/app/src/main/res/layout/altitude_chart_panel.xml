@@ -15,6 +15,14 @@
   android:orientation="vertical"
   tools:showIn="@layout/fragment_routing">
 
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/navismart_trip_cost_button"
+    style="@style/Widget.Material3.Button.TextButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/navismart_trip_cost_title"
+    android:visibility="gone" />
+
   <LinearLayout
     android:id="@+id/time_elevation_line"
     android:layout_width="match_parent"

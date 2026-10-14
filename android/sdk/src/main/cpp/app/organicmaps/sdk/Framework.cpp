@@ -1362,6 +1362,23 @@ JNIEXPORT jobject JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteFollo
   return CreateRoutingInfo(env, info, rm);
 }
 
+JNIEXPORT jint JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteFeeFlags(JNIEnv *, jclass)
+{
+  auto const & session = frm()->GetRoutingManager().RoutingSession();
+  if (!session.IsRouteValid() || session.IsBuilding()) return -1;
+  int flags = 0;
+  session.RouteCall([&](routing::Route const & route)
+  {
+    for (auto const & segment : route.GetRouteSegments())
+    {
+      auto const types = segment.GetRoadTypes();
+      if (types.Has(routing::RoutingOptions::Toll)) flags |= 1;
+      if (types.Has(routing::RoutingOptions::Ferry)) flags |= 2;
+    }
+  });
+  return flags;
+}
+
 JNIEXPORT jdoubleArray JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteLegMetrics(JNIEnv * env, jclass)
 {
   auto const & session = frm()->GetRoutingManager().RoutingSession();

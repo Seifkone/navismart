@@ -137,6 +137,9 @@ final class RoutingBottomMenuController implements View.OnClickListener
     mTime = time;
     mAltitudeDifference = altitudeDifference;
     mTimeVehicle = timeVehicle;
+    altitudeChartFrame.findViewById(R.id.navismart_trip_cost_button).setOnClickListener(v ->
+        context.startActivity(new android.content.Intent(context, app.organicmaps.settings.SettingsActivity.class)
+            .putExtra("navismart_trip_cost", true)));
     mArrival = arrival;
     mActionFrame = actionFrame;
     mActionMessage = actionFrame.findViewById(R.id.tv__message);
@@ -165,6 +168,8 @@ final class RoutingBottomMenuController implements View.OnClickListener
 
   void showAltitudeChartAndRoutingDetails()
   {
+    mAltitudeChartFrame.findViewById(R.id.navismart_trip_cost_button).setVisibility(
+        RoutingController.get().isVehicleRouterType() ? View.VISIBLE : View.GONE);
     UiUtils.hide(mError, mActionFrame, mAltitudeChart, mTimeElevationLine, mTransitFrame);
 
     if (!RoutingController.get().isVehicleRouterType() && !RoutingController.get().isRulerRouterType())

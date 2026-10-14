@@ -28,6 +28,7 @@ public class SettingsActivity
   @Override
   protected Class<? extends Fragment> getFragmentClass()
   {
+    if (getIntent().getBooleanExtra("navismart_trip_cost", false)) return TripCostSettingsFragment.class;
     return SettingsPrefsFragment.class;
   }
 

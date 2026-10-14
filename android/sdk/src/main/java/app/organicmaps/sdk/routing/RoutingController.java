@@ -340,6 +340,14 @@ public class RoutingController
     Framework.nativeBuildRoute();
   }
 
+  /** Explicit planning rebuild, preserving all intermediate route points. */
+  public boolean rebuildPlanningRoute()
+  {
+    if (!isPlanning() || isBuilding() || !isVehicleRouterType()) return false;
+    build();
+    return true;
+  }
+
   public void restoreRoute()
   {
     Framework.nativeLoadRoutePoints();

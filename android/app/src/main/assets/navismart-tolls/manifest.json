@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-10-14T17:28:35Z",
+  "networks": [
+    {
+      "id": "APRR",
+      "file": "APRR.csv",
+      "sourceUrl": "https://voyage.aprr.fr/sites/default/files/2026-02/TARIFS_APRR.pdf",
+      "effectiveFrom": "2026-02-01",
+      "pairs": 21505,
+      "gates": 177,
+      "pdfSha256": "f05dfa58cb4ffba8b940b95319186fbf60f86d3791dce6a9df0919946b635d14",
+      "sha256": "e19a89406dce503ba17029f46fc2ee8661df123c7fa6ab4dfea32cbd5f6fa612"
+    },
+    {
+      "id": "AREA",
+      "file": "AREA.csv",
+      "sourceUrl": "https://voyage.aprr.fr/sites/default/files/2026-02/TARIFS_AREA.pdf",
+      "effectiveFrom": "2026-02-01",
+      "pairs": 955,
+      "gates": 51,
+      "pdfSha256": "e395aa88784cdcd960253213364c0dd4e82237b4b565cb1569a0642af220516b",
+      "sha256": "1026f88f7da339dea3c77124269e8699191e89b7f3368685827d2e82a0f917e5"
+    }
+  ]
+}
