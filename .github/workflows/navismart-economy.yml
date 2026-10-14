@@ -14,6 +14,9 @@ jobs:
       - name: Compile and run offline acceptance scenarios
         shell: pwsh
         run: ./tools/navismart/run-economy.ps1 -Mode Test
+      - name: Verify local OBD session analysis
+        shell: pwsh
+        run: python -m unittest discover -s tools/navismart/tests -p 'test_*.py' -v
       - name: Run configurable simulation
         shell: pwsh
         run: ./tools/navismart/run-economy.ps1 -Mode Simulate -Scenario ./navismart/economy/scenarios/two-routes.properties

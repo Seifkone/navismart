@@ -11,11 +11,15 @@
 - Import du ZIP gouvernemental réel : 9 818 stations, 31 705 prix, aucun champ rejeté.
 - Import du DATEX II réel : 751 fiches géolocalisées, avec dates et validité distinctes.
 - Ressources françaises et anglaises présentes avec les mêmes identifiants.
+- Onze tests Python de l’analyse locale des journaux sont réussis : unités, données
+  absentes, intégrales bornées à leur couverture, horloge, séparation des sessions
+  et refus d’écraser les fichiers sources ou un rapport existant.
 - Le premier APK stations/diagnostic OBD (`95cc21a`) et ses dix tests Android ont
   [réussi](https://github.com/Seifkone/navismart/actions/runs/38594381183).
 
 La comparaison des détours, les avis routiers et le transfert Android des profils
-sont soumis à une nouvelle construction. Les six nouveaux tests Android ciblent
+ont été compilés sur `51004ad` dans le [workflow réussi](https://github.com/Seifkone/navismart/actions/runs/38596922868).
+Les seize tests Android ont réussi ; les six nouveaux ciblent
 les conversions de sous-trajets et l’invalidation d’une comparaison devenue ancienne.
 Aucun de ces contrôles ne remplace l’installation, le guidage et la connexion OBD
 sur véhicule. Les flux réels ne sont pas intégrés aux tests automatiques : ceux-ci
