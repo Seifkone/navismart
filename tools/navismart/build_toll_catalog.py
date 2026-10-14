@@ -97,7 +97,7 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_suffix('.pending')
     with temporary.open('w', encoding='utf-8', newline='') as target:
-        writer = csv.writer(target)
+        writer = csv.writer(target, lineterminator='\n')
         writer.writerow(HEADER if args.network == 'APRR' else AREA_HEADER)
         writer.writerows(rows)
     temporary.replace(args.output)

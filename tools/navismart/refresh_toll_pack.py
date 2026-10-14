@@ -65,7 +65,7 @@ def build(output):
         if old and (effective < old['effectiveFrom'] or len(rows) < old['pairs'] * .98):
             raise ValueError('Tariff date or coverage regression')
         buffer = io.StringIO(newline='')
-        writer = csv.writer(buffer)
+        writer = csv.writer(buffer, lineterminator='\n')
         writer.writerow(HEADER if network == 'APRR' else AREA_HEADER)
         writer.writerows(rows)
         data = buffer.getvalue().encode('utf-8')
