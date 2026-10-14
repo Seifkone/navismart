@@ -96,6 +96,30 @@ public final class FuelTests
       equal(0, result.affordablePlans().size());
       equal(EconomyEngine.Choice.NO_FEASIBLE_ROUTE, result.decision().choice());
     });
+    test("discarded ZIP entries cannot bypass decompression limit", () -> {
+      try
+      {
+        var bytes = new ByteArrayOutputStream();
+        try (var zip = new java.util.zip.ZipOutputStream(bytes))
+        {
+          zip.putNextEntry(new java.util.zip.ZipEntry("unexpected.bin")); zip.write(new byte[65537]); zip.closeEntry();
+          zip.putNextEntry(new java.util.zip.ZipEntry("prices.xml")); zip.write(xml("").getBytes()); zip.closeEntry();
+        }
+        try { new GovernmentFuelReader().readZip(new ByteArrayInputStream(bytes.toByteArray()), NOW); throw new AssertionError("Oversized skipped entry accepted"); }
+        catch (IOException expected) {}
+      } catch (IOException error) { throw new AssertionError(error); }
+    });
+    test("reachable partial purchase keeps consumed and purchased costs separate", () -> {
+      var before = new Leg("before", Estimate.exact(100), Estimate.exact(50), Map.of());
+      var after = new Leg("after", Estimate.exact(100), Estimate.exact(50), Map.of());
+      var stop = new RefuelPlanner.StopOption("s", "station", "tank", before, after, Estimate.exact(1.4),
+          Estimate.exact(5), Estimate.exact(0), Estimate.exact(0), Estimate.exact(0), List.of(10.0, 50.0));
+      var result = RefuelPlanner.compare(Simulator.combustion(10), Simulator.route("direct", 200, 100, 0), List.of(stop), new Policy(5, .5, .25));
+      var plan = result.decision().assessments().get(1);
+      equal(EconomyEngine.Feasibility.FEASIBLE, plan.feasibility()); near(20.8, plan.consumedEnergyCostEuro().expected());
+      near(14, plan.energyPurchasesEuro().expected()); near(8, plan.remainingStock().get("tank"));
+      equal(EconomyEngine.Feasibility.INFEASIBLE, result.decision().assessments().get(2).feasibility());
+    });
     System.out.println("PASS: " + passed + " fuel and refuelling scenarios");
   }
   private static String xml(String inner)

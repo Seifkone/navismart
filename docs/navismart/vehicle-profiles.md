@@ -76,7 +76,16 @@ L’option `-At` est réservée aux simulations, pas à la navigation réelle.
 Sur ces entrées, le trajet sans péage coûte environ 10,8 € en diesel, 10,6 € en flexfuel
 et 5,4 € en électrique. Cela n’est pas une comparaison de véhicules réels.
 
-## Validation
+## Sauvegarde et suppression
+
+Les réglages proposent l’export UTF-8 vers un fichier choisi dans Android et la
+restauration après confirmation du remplacement de tous les profils. La lecture
+est bornée à un million de caractères et refuse un UTF-8 invalide, une version
+incompatible ou un catalogue incohérent. Un échec conserve les profils actuels.
+La restauration ne modifie aucune date de mesure : un niveau ancien reste ancien.
+La suppression d’un profil demande confirmation et sélectionne un profil restant.
+
+## Validation historique du deuxième jalon
 
 39 scénarios économiques et 20 scénarios de profils sont exécutés en Java 17 et via Gradle.
 Le stockage Android et l’adaptateur de trajet possèdent dix tests supplémentaires

@@ -46,6 +46,20 @@ public class CoMapsEconomyAdapterTest
     assertThrows(IllegalArgumentException.class, () -> CoMapsEconomyAdapter.kilometres(distance(-1, Distance.Units.Meters)));
     assertThrows(IllegalArgumentException.class, () -> CoMapsEconomyAdapter.route(distance(10, Distance.Units.Meters), -1));
   }
+  @Test public void nativeSubroutesKeepRoadDistancesAndTimeWithoutRounding()
+  {
+    var route = CoMapsEconomyAdapter.route(new double[]{1234.567, 123.45, 2000, 180});
+    assertEquals(2, route.events().size());
+    assertEquals(1.234567, ((Leg) route.events().get(0)).distanceKm().expected(), 1e-10);
+    assertEquals(123.45 / 60, ((Leg) route.events().get(0)).durationMinutes().expected(), 1e-10);
+    assertFalse(((Leg) route.events().get(0)).distanceKm().hasBounds());
+    assertNull(route.tolls().expected());
+  }
+  @Test public void malformedNativeSubrouteMetricsRejected()
+  {
+    for (double[] metrics : new double[][]{null, {}, {1}, {-1, 1}, {1, Double.NaN}, {Double.POSITIVE_INFINITY, 1}})
+      assertThrows(IllegalArgumentException.class, () -> CoMapsEconomyAdapter.route(metrics));
+  }
   private static Distance distance(double value, Distance.Units unit)
   { return new Distance(value, "unused", (byte) unit.ordinal()); }
 }

@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /** Initial route preview bridge. No network, text parsing, invented toll tariff or automatic reroute. */
 public final class CoMapsEconomyAdapter
@@ -40,4 +41,26 @@ public final class CoMapsEconomyAdapter
   {
     return new EconomyEngine().evaluate(profile.forTrip(now, Duration.ofDays(1)), route(distance, seconds));
   }
+  public static List<Leg> legs(double[] metrics)
+  {
+    if (metrics == null || metrics.length == 0 || metrics.length % 2 != 0 || metrics.length > 100)
+      throw new IllegalArgumentException("Route subroute metrics required");
+    var legs = new ArrayList<Leg>();
+    for (int i = 0; i < metrics.length; i += 2)
+    {
+      Estimate.checkNumber(metrics[i]); Estimate.checkNumber(metrics[i+1]);
+      legs.add(new Leg("CoMaps road leg " + (i/2 + 1),
+          Estimate.nominal(metrics[i] / 1000.0, "CoMaps offline road distance"),
+          Estimate.nominal(metrics[i+1] / 60.0, "CoMaps offline modelled duration"), Map.of()));
+    }
+    return List.copyOf(legs);
+  }
+  public static Route route(double[] metrics)
+  {
+    return new Route("comaps-preview", "CoMaps road route", new ArrayList<Event>(legs(metrics)),
+        Estimate.missing(Estimate.State.UNKNOWN, "toll tariffs not supplied"),
+        Estimate.missing(Estimate.State.UNKNOWN, "other fees not supplied"));
+  }
+  public static EconomyEngine.Assessment assess(Profile profile, double[] metrics, Instant now)
+  { return new EconomyEngine().evaluate(profile.forTrip(now, Duration.ofDays(1)), route(metrics)); }
 }

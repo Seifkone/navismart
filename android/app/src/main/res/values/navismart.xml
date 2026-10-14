@@ -94,4 +94,48 @@
   <string-array name="navismart_obd_status">
     <item>Connecting…</item><item>Discovering supported sensors…</item><item>Recording locally. Updates depend on adapter response time.</item><item>No supported standard sensor found.</item><item>Session stopped. Displayed measurements are historical.</item><item>Connection, adapter or local recording failed. Session stopped.</item><item>Recording limit reached (1 hour, 5 MiB per session, 100 sessions or 50 MiB total). Export or delete sessions to free space.</item>
   </string-array>
+
+  <string name="navismart_compare_stop">Compare the added fuel stop</string>
+  <string name="navismart_compare_entry">After adding a station, wait for routing to finish, then return here.</string>
+  <string name="navismart_compare_unavailable">Prepare a driving route without intermediate stops, add a station here, wait for recalculation and return. This comparison expires after 30 minutes or any further route change.</string>
+  <string name="navismart_compare_notice">Compare the original route with the recalculated road route. A compatible active vehicle, current energy level and price less than one day old are required. Enter the quantity to buy and stop duration. Combined fees include tolls, parking and station charges: leave blank if unknown; enter zero only if verified. No purchase is recorded as an actual refill.</string>
+  <string name="navismart_purchase_litres">Quantity to buy (L)</string>
+  <string name="navismart_stop_minutes">Time at the station (minutes)</string>
+  <string name="navismart_direct_fees">All fees for the original route (€; optional)</string>
+  <string name="navismart_stop_fees">All fees for the route with station (€; optional)</string>
+  <string name="navismart_compare_calculate">Calculate</string>
+  <string name="navismart_compare_invalid">Check the active vehicle, matching fuel, fresh station price, unchanged route and non-negative numbers. Quantity must exceed zero. Only one fuel tank is supported in this comparison.</string>
+  <string name="navismart_compare_conditional">Conditional estimates using manual consumption and modelled road times, with unquantified uncertainty. No guaranteed recommendation. Reported stock, opening hours and availability at arrival remain unverified. These results do not change the route or stored vehicle level. Purchases and consumed energy are separate cost views: do not add them together.</string>
+  <string name="navismart_direct_route">Original route</string>
+  <string name="navismart_comparison_values">Road distance: %1$s\nTime, including stop: %2$s\nEnergy consumed: %3$s\nImmediate expense, including fees: %4$s\nEconomic cost, including fees: %5$s\nRemaining fuel: %6$s</string>
+  <string name="navismart_time_allowance">Extra time allowed relative to the fastest candidate: %1$s</string>
+  <string-array name="navismart_time_states">
+    <item>Within time allowance using central estimates</item><item>Time allowance uncertain</item><item>Time allowance exceeded</item><item>Time allowance unknown</item>
+  </string-array>
+
+  <string name="navismart_traffic_title">NaviSmart · Government road notices</string>
+  <string name="navismart_traffic_summary">Bison Futé events and local cache</string>
+  <string name="navismart_traffic_notice">Source: Bison Futé / French road authorities, Open Licence 2.0. Partial coverage of the national road network excluding concession motorways. Notices within 50 km of the route start, otherwise the map centre, using reported coordinates only. This is not a complete route check. Direction and affected carriageway are not matched to your route. No notice does not mean free-flowing traffic. No delay or rerouting is inferred. The national aggregate updates hourly; no position is sent.</string>
+  <string name="navismart_traffic_refresh">Update government road notices</string>
+  <string name="navismart_traffic_no_cache">No local road notices yet. Download while connected to consult them offline.</string>
+  <string name="navismart_traffic_publication">Source publication: %1$s\nDownloaded: %2$s</string>
+  <string name="navismart_traffic_stale">Publication or cache is older than two hours, or its date is invalid. Displayed notices may no longer apply.</string>
+  <string name="navismart_traffic_no_matches">No located notice in this area. Traffic conditions remain unknown.</string>
+  <string name="navismart_traffic_event">Road notice</string>
+  <string name="navismart_traffic_dates">Record updated: %1$s\nStarts: %2$s\nEnds: %3$s\nReported direction: %4$s\nProximity does not establish that your road or lane is affected.</string>
+  <string name="navismart_north">Northbound</string><string name="navismart_south">Southbound</string>
+  <string name="navismart_east">Eastbound</string><string name="navismart_west">Westbound</string>
+  <string name="navismart_both_ways">Both directions</string>
+  <string-array name="navismart_traffic_states">
+    <item>Listed within declared validity period</item><item>Planned for later</item><item>Expired</item><item>Suspended</item><item>Schedule or validity needs checking</item>
+  </string-array>
+
+  <string name="navismart_export_profiles">Export vehicle profiles</string>
+  <string name="navismart_import_profiles">Restore vehicle profiles</string>
+  <string name="navismart_import_confirm">Replace all current profiles with the %1$d profiles in this backup? Observation dates are preserved; imported energy levels may be stale.</string>
+  <string name="navismart_replace_profiles">Replace profiles</string>
+  <string name="navismart_transfer_done">Profiles exported to the selected destination.</string>
+  <string name="navismart_transfer_error">Profile transfer failed. Existing profiles were kept.</string>
+  <string name="navismart_delete_profile">Delete profile</string>
+  <string name="navismart_delete_profile_confirm">Permanently delete this vehicle profile?</string>
 </resources>

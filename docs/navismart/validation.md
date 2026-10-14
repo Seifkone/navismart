@@ -1,5 +1,27 @@
 # Validation des jalons NaviSmart
 
+## Travaux du 14 octobre 2026
+
+- 101 scénarios Java indépendants réussis : 39 économie, 20 profils, 17 carburants,
+  13 OBD, huit événements routiers et quatre transferts de profils.
+- Vérification Gradle indépendante réussie avec Java 17 ; le premier essai sous
+  bac à sable ne pouvait pas joindre son propre processus Gradle sur localhost.
+  Le même contrôle avec les permissions locales nécessaires est réussi.
+- Import du ZIP gouvernemental réel : 9 818 stations, 31 705 prix, aucun champ rejeté.
+- Import du DATEX II réel : 751 fiches géolocalisées, avec dates et validité distinctes.
+- Ressources françaises et anglaises présentes avec les mêmes identifiants.
+- Le premier APK stations/diagnostic OBD (`95cc21a`) et ses dix tests Android ont
+  [réussi](https://github.com/Seifkone/navismart/actions/runs/38594381183).
+
+La comparaison des détours, les avis routiers et le transfert Android des profils
+sont soumis à une nouvelle construction. Les six nouveaux tests Android ciblent
+les conversions de sous-trajets et l’invalidation d’une comparaison devenue ancienne.
+Aucun de ces contrôles ne remplace l’installation, le guidage et la connexion OBD
+sur véhicule. Les flux réels ne sont pas intégrés aux tests automatiques : ceux-ci
+restent déterministes et hors ligne.
+
+## Historique du 13 octobre 2026
+
 Validation locale le 13 octobre 2026, Java 17 et Gradle 8.14.4.
 
 - Compilation Java indépendante : réussie.

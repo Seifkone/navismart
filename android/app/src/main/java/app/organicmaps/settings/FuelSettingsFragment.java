@@ -83,6 +83,10 @@ public final class FuelSettingsFragment extends BaseXmlSettingsFragment
     if (!isAdded()) return;
     var screen = getPreferenceScreen(); screen.removeAll();
     info(getString(R.string.navismart_fuel_notice));
+    var compare = new Preference(requireContext());
+    compare.setTitle(R.string.navismart_compare_stop); compare.setSummary(R.string.navismart_compare_entry);
+    compare.setOnPreferenceClickListener(ignored -> { FuelComparisonDialog.show(requireContext()); return true; });
+    screen.addPreference(compare);
     if (mError != null) info(mError);
     var select = new ListPreference(requireContext());
     select.setKey("navismart_fuel_energy"); select.setPersistent(false);
@@ -126,6 +130,7 @@ public final class FuelSettingsFragment extends BaseXmlSettingsFragment
         && match.price().state() != com.navismart.economy.Estimate.State.INVALID
         && match.availability() != FuelData.Availability.CLOSED && match.availability() != FuelData.Availability.OUTAGE)
       dialog.setNeutralButton(R.string.navismart_add_fuel_stop, (d,w) -> {
+        app.organicmaps.navismart.FuelStopComparison.capture(station, mEnergy, mSnapshot.receivedAt());
         var object = MapObject.createMapObject(FeatureId.EMPTY, MapObject.POI, station.label(), "", station.point().latitude(), station.point().longitude());
         routing.addStop(object); requireActivity().finish();
       });

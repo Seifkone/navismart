@@ -94,4 +94,48 @@
   <string-array name="navismart_obd_status">
     <item>Connexion…</item><item>Recherche des capteurs disponibles…</item><item>Enregistrement local. La fréquence dépend du temps de réponse de la prise.</item><item>Aucun capteur standard disponible.</item><item>Session arrêtée. Les valeurs affichées sont historiques.</item><item>Échec de connexion, de la prise ou de l’enregistrement local. Session arrêtée.</item><item>Limite atteinte (1 h, 5 Mio par session, 100 sessions ou 50 Mio au total). Exportez ou supprimez des sessions pour libérer de la place.</item>
   </string-array>
+
+  <string name="navismart_compare_stop">Comparer l’arrêt carburant ajouté</string>
+  <string name="navismart_compare_entry">Après ajout d’une station, attendez le calcul du trajet puis revenez ici.</string>
+  <string name="navismart_compare_unavailable">Préparez un trajet automobile sans étape, ajoutez ici une station, attendez le recalcul puis revenez. Cette comparaison expire après 30 minutes ou toute nouvelle modification du trajet.</string>
+  <string name="navismart_compare_notice">Compare le trajet initial au détour routier recalculé. Un véhicule actif compatible, un niveau actuel et un prix de moins d’un jour sont nécessaires. Renseignez la quantité achetée et la durée de l’arrêt. Les frais regroupent péages, stationnement et frais de station : laissez vide si inconnus, zéro uniquement si vérifié. Aucun achat ne sera enregistré comme un plein réel.</string>
+  <string name="navismart_purchase_litres">Quantité à acheter (L)</string>
+  <string name="navismart_stop_minutes">Durée à la station (minutes)</string>
+  <string name="navismart_direct_fees">Tous frais du trajet initial (€ ; facultatif)</string>
+  <string name="navismart_stop_fees">Tous frais du trajet avec station (€ ; facultatif)</string>
+  <string name="navismart_compare_calculate">Calculer</string>
+  <string name="navismart_compare_invalid">Vérifiez le véhicule actif, le carburant correspondant, le prix récent, le trajet inchangé et les nombres positifs ou nuls. La quantité doit dépasser zéro. Cette comparaison accepte un seul réservoir de carburant.</string>
+  <string name="navismart_compare_conditional">Estimations conditionnelles selon votre consommation et les durées routières modélisées, avec une incertitude non chiffrée. Aucune recommandation garantie. Le stock déclaré, les horaires et la disponibilité à l’arrivée restent à vérifier. Ces résultats ne changent ni le trajet ni le niveau du véhicule. Achat et énergie consommée sont deux vues différentes du coût : ne les additionnez pas.</string>
+  <string name="navismart_direct_route">Trajet initial</string>
+  <string name="navismart_comparison_values">Distance routière : %1$s\nDurée avec arrêt : %2$s\nÉnergie consommée : %3$s\nDépense immédiate avec frais : %4$s\nCoût économique avec frais : %5$s\nCarburant restant : %6$s</string>
+  <string name="navismart_time_allowance">Temps supplémentaire admis par rapport au candidat le plus rapide : %1$s</string>
+  <string-array name="navismart_time_states">
+    <item>Temps central dans la limite admise</item><item>Respect du temps incertain</item><item>Temps supplémentaire dépassé</item><item>Respect du temps inconnu</item>
+  </string-array>
+
+  <string name="navismart_traffic_title">NaviSmart · Avis routiers publics</string>
+  <string name="navismart_traffic_summary">Événements Bison Futé et cache local</string>
+  <string name="navismart_traffic_notice">Source : Bison Futé / services routiers de l’État, Licence Ouverte 2.0. Couverture partielle du réseau national non concédé. Avis à moins de 50 km du départ, sinon du centre de la carte, selon leurs coordonnées déclarées. Ce relevé ne vérifie pas tout le trajet. Le sens et la chaussée ne sont pas associés à votre itinéraire. Sans avis, le trafic reste inconnu. Aucun retard ni changement de route n’est déduit. L’agrégation nationale est horaire ; aucune position n’est envoyée.</string>
+  <string name="navismart_traffic_refresh">Actualiser les avis routiers publics</string>
+  <string name="navismart_traffic_no_cache">Aucun avis local. Téléchargez les avis avec une connexion pour les consulter ensuite hors ligne.</string>
+  <string name="navismart_traffic_publication">Publication de la source : %1$s\nTéléchargement : %2$s</string>
+  <string name="navismart_traffic_stale">Publication ou cache de plus de deux heures, ou date invalide. Les avis affichés peuvent ne plus être applicables.</string>
+  <string name="navismart_traffic_no_matches">Aucun avis géolocalisé dans cette zone. Les conditions de circulation restent inconnues.</string>
+  <string name="navismart_traffic_event">Avis routier</string>
+  <string name="navismart_traffic_dates">Fiche actualisée : %1$s\nDébut : %2$s\nFin : %3$s\nSens déclaré : %4$s\nLa proximité ne prouve pas que votre route ou votre voie est concernée.</string>
+  <string name="navismart_north">Vers le nord</string><string name="navismart_south">Vers le sud</string>
+  <string name="navismart_east">Vers l’est</string><string name="navismart_west">Vers l’ouest</string>
+  <string name="navismart_both_ways">Dans les deux sens</string>
+  <string-array name="navismart_traffic_states">
+    <item>Avis publié dans sa période de validité déclarée</item><item>Prévu ultérieurement</item><item>Expiré</item><item>Suspendu</item><item>Horaires ou validité à vérifier</item>
+  </string-array>
+
+  <string name="navismart_export_profiles">Exporter les profils véhicules</string>
+  <string name="navismart_import_profiles">Restaurer des profils véhicules</string>
+  <string name="navismart_import_confirm">Remplacer tous les profils actuels par les %1$d profils de cette sauvegarde ? Les dates de mesure sont conservées ; les niveaux importés peuvent être anciens.</string>
+  <string name="navismart_replace_profiles">Remplacer les profils</string>
+  <string name="navismart_transfer_done">Profils exportés vers la destination choisie.</string>
+  <string name="navismart_transfer_error">Échec du transfert. Les profils existants ont été conservés.</string>
+  <string name="navismart_delete_profile">Supprimer le profil</string>
+  <string name="navismart_delete_profile_confirm">Supprimer définitivement ce profil véhicule ?</string>
 </resources>

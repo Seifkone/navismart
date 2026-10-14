@@ -39,6 +39,10 @@ public final class GovernmentFuelReader
       if (entry == null) break;
       if (!entry.isDirectory() && entry.getName().toLowerCase(java.util.Locale.ROOT).endsWith(".xml"))
         return readXml(zip, receivedAt);
+      // getNextEntry drains the previous entry: bound discarded content too.
+      byte[] discard = new byte[4096]; int skipped = 0, count;
+      while ((count = zip.read(discard)) != -1)
+        if ((skipped += count) > 65536) throw new IOException("Unexpected oversized ZIP entry");
     }
     throw new IOException("No XML in government fuel archive");
   }

@@ -44,6 +44,7 @@
 #include "indexer/validate_and_format_contacts.hpp"
 
 #include "routing/following_info.hpp"
+#include "routing/route.hpp"
 #include "routing/speed_camera_manager.hpp"
 
 #include "platform/country_file.hpp"
@@ -70,6 +71,7 @@
 #include "3party/open-location-code/openlocationcode.h"
 
 #include <memory>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -1358,6 +1360,42 @@ JNIEXPORT jobject JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteFollo
     return nullptr;
 
   return CreateRoutingInfo(env, info, rm);
+}
+
+JNIEXPORT jdoubleArray JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteLegMetrics(JNIEnv * env, jclass)
+{
+  auto const & session = frm()->GetRoutingManager().RoutingSession();
+  if (!session.IsRouteValid() || session.IsBuilding())
+    return nullptr;
+  vector<double> metrics;
+  bool valid = true;
+  session.RouteCall([&](routing::Route const & route)
+  {
+    auto const & segments = route.GetRouteSegments();
+    size_t previousEnd = 0;
+    for (auto const & subroute : route.GetSubroutes())
+    {
+      size_t const begin = subroute.GetBeginSegmentIdx();
+      size_t const end = subroute.GetEndSegmentIdx();
+      if (begin != previousEnd || end < begin || end > segments.size())
+      { valid = false; return; }
+      double const startM = begin == 0 ? 0 : segments[begin - 1].GetDistFromBeginningMeters();
+      double const startS = begin == 0 ? 0 : segments[begin - 1].GetTimeFromBeginningSec();
+      double const endM = end == 0 ? 0 : segments[end - 1].GetDistFromBeginningMeters();
+      double const endS = end == 0 ? 0 : segments[end - 1].GetTimeFromBeginningSec();
+      double const distance = endM - startM;
+      double const duration = endS - startS;
+      if (!std::isfinite(distance) || !std::isfinite(duration) || distance < 0 || duration < 0)
+      { valid = false; return; }
+      metrics.push_back(distance); metrics.push_back(duration);
+      previousEnd = end;
+    }
+    if (previousEnd != segments.size()) valid = false;
+  });
+  if (!valid || metrics.empty()) return nullptr;
+  auto result = env->NewDoubleArray(static_cast<jsize>(metrics.size()));
+  if (result != nullptr) env->SetDoubleArrayRegion(result, 0, static_cast<jsize>(metrics.size()), metrics.data());
+  return result;
 }
 
 JNIEXPORT jobjectArray JNICALL Java_app_organicmaps_sdk_Framework_nativeGetRouteJunctionPoints(JNIEnv * env, jclass,

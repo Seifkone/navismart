@@ -14,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Keep;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -35,6 +37,39 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
 {
   private Catalog mCatalog;
   private VehicleProfileRepository mRepository;
+  private final java.util.concurrent.ExecutorService mTransferWorker = java.util.concurrent.Executors.newSingleThreadExecutor();
+  private final android.os.Handler mMain = new android.os.Handler(android.os.Looper.getMainLooper());
+  private final ActivityResultLauncher<String> mExport = registerForActivityResult(new ActivityResultContracts.CreateDocument("text/plain"), uri -> {
+    if (uri == null) return;
+    var resolver = requireContext().getContentResolver();
+    mTransferWorker.execute(() -> {
+      boolean success = false;
+      try (var output = resolver.openOutputStream(uri, "w"))
+      { if (output == null) throw new IOException("No destination"); com.navismart.economy.ProfileTransfer.write(mRepository.load(), output); success = true; }
+      catch (IOException | RuntimeException ignored) {}
+      transferResult(success);
+    });
+  });
+  private final ActivityResultLauncher<String[]> mImport = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+    if (uri == null) return;
+    var resolver = requireContext().getContentResolver();
+    mTransferWorker.execute(() -> {
+      try (var input = resolver.openInputStream(uri))
+      {
+        if (input == null) throw new IOException("No source");
+        var imported = com.navismart.economy.ProfileTransfer.read(input);
+        mMain.post(() -> {
+          if (!isAdded()) return;
+          new AlertDialog.Builder(requireContext()).setMessage(getString(R.string.navismart_import_confirm, imported.profiles().size()))
+              .setPositiveButton(R.string.navismart_replace_profiles, (d,w) -> { if (save(imported)) reloadProfiles(); })
+              .setNegativeButton(android.R.string.cancel, null).show();
+        });
+      }
+      catch (IOException | RuntimeException error) { transferResult(false); }
+    });
+  });
+  private void transferResult(boolean success)
+  { mMain.post(() -> { if (isAdded()) Toast.makeText(requireContext(), success ? R.string.navismart_transfer_done : R.string.navismart_transfer_error, Toast.LENGTH_LONG).show(); }); }
   @Override protected int getXmlResources() { return R.xml.prefs_navismart_vehicles; }
 
   @Override public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
@@ -48,6 +83,10 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
   {
     var screen = getPreferenceScreen();
     screen.removeAll();
+    var export = new Preference(requireContext()); export.setTitle(R.string.navismart_export_profiles);
+    export.setOnPreferenceClickListener(ignored -> { mExport.launch("navismart-vehicles.properties"); return true; }); screen.addPreference(export);
+    var restore = new Preference(requireContext()); restore.setTitle(R.string.navismart_import_profiles);
+    restore.setOnPreferenceClickListener(ignored -> { mImport.launch(new String[]{"text/*", "application/octet-stream"}); return true; }); screen.addPreference(restore);
     try { mCatalog = mRepository.load(); }
     catch (IOException error)
     {
@@ -106,7 +145,10 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
     }
     try
     {
-      var result = CoMapsEconomyAdapter.assess(mCatalog.active(), info.distToTarget, info.totalTimeInSeconds, Instant.now());
+      double[] metrics = app.organicmaps.sdk.Framework.nativeGetRouteLegMetrics();
+      var result = metrics == null
+          ? CoMapsEconomyAdapter.assess(mCatalog.active(), info.distToTarget, info.totalTimeInSeconds, Instant.now())
+          : CoMapsEconomyAdapter.assess(mCatalog.active(), metrics, Instant.now());
       Estimate cost = result.consumedEnergyCostEuro();
       String value = cost.expected() == null ? getString(R.string.navismart_unknown)
           : String.format(Locale.getDefault(), "≈ %.1f €", cost.expected());
@@ -181,6 +223,12 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
     form.addView(error);
     AlertDialog dialog = new AlertDialog.Builder(requireContext()).setTitle(R.string.navismart_edit_vehicle)
         .setView(scroll).setPositiveButton(R.string.navismart_save, null)
+        .setNeutralButton(R.string.navismart_delete_profile, (d,w) -> {
+          if (mCatalog.profiles().stream().noneMatch(p -> p.vehicle().id().equals(profile.vehicle().id()))) return;
+          new AlertDialog.Builder(requireContext()).setMessage(R.string.navismart_delete_profile_confirm)
+              .setPositiveButton(R.string.navismart_delete_profile, (confirm,which) -> { if (save(mCatalog.remove(profile.vehicle().id()))) reloadProfiles(); })
+              .setNegativeButton(android.R.string.cancel, null).show();
+        })
         .setNegativeButton(android.R.string.cancel, null).create();
     dialog.setOnShowListener(ignored -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(button -> {
       try
@@ -297,4 +345,5 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
       return original;
     return new Estimate(v, l, u, v == null ? Estimate.State.UNKNOWN : Estimate.State.FRESH, "user-entered assumption", null);
   }
+  @Override public void onDestroy() { mTransferWorker.shutdown(); super.onDestroy(); }
 }

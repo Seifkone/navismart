@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +34,7 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
   private final EnumMap<ObdProtocol.Signal, ObdProtocol.Sample> mSamples = new EnumMap<>(ObdProtocol.Signal.class);
   private final java.util.concurrent.ExecutorService mExportWorker = Executors.newSingleThreadExecutor();
   private ObdSession mSession;
-  private File mLastLog, mExportFile;
+  private File mExportFile;
   private String mMessage;
   private int mGeneration;
   private final ActivityResultLauncher<String> mPermission = registerForActivityResult(
@@ -78,10 +77,9 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
     action(getString(R.string.navismart_obd_logs), this::showLogs);
     for (var sample : mSamples.values())
     {
-      var p = new Preference(requireContext());
+      var p = new Preference(requireContext()); p.setKey("obd_" + sample.signal().name());
       p.setTitle(getResources().getStringArray(R.array.navismart_obd_signals)[sample.signal().ordinal()]);
-      p.setSummary((sample.value() == null ? getResources().getStringArray(R.array.navismart_obd_states)[sample.state().ordinal()]
-          : String.format(Locale.getDefault(), "%.2f %s", sample.value(), sample.signal().unit)) + "\n" + sample.observedAt());
+      p.setSummary(sampleText(sample));
       p.setSelectable(false); screen.addPreference(p);
     }
   }
@@ -114,19 +112,31 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
           if (!isAdded() || generation != mGeneration) return;
           mMessage = getResources().getStringArray(R.array.navismart_obd_status)[status.ordinal()];
           if (status.ordinal() >= ObdSession.Status.NO_SENSORS.ordinal())
-          { mLastLog = mSession == null ? mLastLog : mSession.log(); mSession = null; }
+          { mSession = null; }
           render();
         });
       }
       public void sample(ObdProtocol.Sample sample)
-      { mMain.post(() -> { if (isAdded() && generation == mGeneration) { mSamples.put(sample.signal(), sample); render(); } }); }
+      {
+        mMain.post(() -> {
+          if (!isAdded() || generation != mGeneration) return;
+          mSamples.put(sample.signal(), sample);
+          Preference row = findPreference("obd_" + sample.signal().name());
+          if (row == null) render(); else row.setSummary(sampleText(sample));
+        });
+      }
     });
     mSession.start(device); render();
   }
   private void stop()
   {
     mGeneration++;
-    if (mSession != null) { mLastLog = mSession.log(); mSession.close(); mSession = null; }
+    if (mSession != null) { mSession.close(); mSession = null; }
+  }
+  private String sampleText(ObdProtocol.Sample sample)
+  {
+    return (sample.value() == null ? getResources().getStringArray(R.array.navismart_obd_states)[sample.state().ordinal()]
+        : String.format(Locale.getDefault(), "%.2f %s", sample.value(), sample.signal().unit)) + "\n" + sample.observedAt();
   }
   private void showLogs()
   {

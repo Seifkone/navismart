@@ -218,6 +218,10 @@ public class Framework
   @Nullable
   public static native RoutingInfo nativeGetRouteFollowingInfo();
 
+  /** UI thread only: pairs of modelled road distance (metres) and duration (seconds), one per subroute. */
+  @Nullable
+  public static native double[] nativeGetRouteLegMetrics();
+
   @Nullable
   /// @param[in] maxDistM Max distance between points in meters.
   public static native JunctionInfo[] nativeGetRouteJunctionPoints(double maxDistM);

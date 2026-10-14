@@ -21,11 +21,24 @@ changement d’heure et les champs absents restent inconnus.
 La liste présente au plus trente stations dans un rayon de trente kilomètres du
 départ préparé, sinon du centre de la carte. La distance affichée est à vol d’oiseau.
 Chaque station peut être affichée sur la carte ou ajoutée comme étape à un trajet
-automobile préparé ; CoMaps recalcule alors l’itinéraire localement. Cela ne garantit
-pas un détour rentable. Les comparaisons économiques ont besoin des vrais tronçons
-routiers, du stock, des quantités achetées et des frais renseignés.
+automobile préparé ; CoMaps recalcule alors l’itinéraire localement.
 
-`RefuelPlanner` prépare déjà cette comparaison avec des tronçons et quantités
+Pour comparer un arrêt : préparer d’abord un trajet sans étape, ajouter une station,
+attendre le recalcul puis revenir à « Comparer l’arrêt carburant ajouté ». L’écran
+demande litres achetés, durée de l’arrêt et frais globaux de chaque candidat. Vide
+signifie inconnu ; zéro doit être confirmé par une saisie explicite. Le réservoir
+actif doit utiliser ce carburant et le prix doit dater de moins d’un jour.
+
+Un petit pont JNI retourne les distances et durées non formatées des sous-trajets
+CoMaps, sans modifier son algorithme. Le trajet initial est retenu en mémoire ;
+toute révision ultérieure, différence de points ou délai de trente minutes invalide
+la comparaison. Le résultat distingue coût économique, montant payé, consommation,
+stock final et budget temps. Il n’enregistre pas un achat réel. Les incertitudes de
+consommation et de durée ne sont pas inventées ; aucune recommandation garantie
+n’est affichée. Les hybrides et trajets avec plusieurs stations ne sont pas encore
+pris en charge par cet écran.
+
+`RefuelPlanner` effectue cette comparaison avec des tronçons et quantités
 explicites. Il délègue les réserves chronologiques, la capacité et le budget temps
 au moteur économique. Aucun calcul à vol d’oiseau ne remplace le routage.
 

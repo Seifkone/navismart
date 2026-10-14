@@ -54,9 +54,11 @@ public final class FuelRepository
       if (connection.getContentLength() > MAX_ZIP_BYTES) throw new IOException("Oversized fuel archive");
       try (InputStream input = connection.getInputStream(); var output = new ByteArrayOutputStream())
       {
+        long deadline = System.nanoTime() + 120_000_000_000L;
         byte[] buffer = new byte[16384]; int count;
         while ((count = input.read(buffer)) != -1)
         {
+          if (Thread.currentThread().isInterrupted() || System.nanoTime() >= deadline) throw new IOException("Fuel download cancelled or timed out");
           if (output.size() + count > MAX_ZIP_BYTES) throw new IOException("Oversized fuel archive");
           output.write(buffer, 0, count);
         }

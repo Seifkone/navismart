@@ -74,7 +74,9 @@ PASS external entities internal DTD and unexpected roots rejected
 PASS ZIP with XML and non-UTF8 declaration parsed without guessing charset
 PASS geographical shortlist is deterministic and not a road route
 PASS refuel plans respect reachability capacity and time
-PASS: 15 fuel and refuelling scenarios
+PASS discarded ZIP entries cannot bypass decompression limit
+PASS reachable partial purchase keeps consumed and purchased costs separate
+PASS: 17 fuel and refuelling scenarios
 PASS OBD RPM example matches ELM datasheet
 PASS zero RPM is a measurement, not missing data
 PASS negative temperatures and trims are retained
@@ -89,3 +91,17 @@ PASS prompt framing preserves next response
 PASS timeouts cancellation response limits and command guard
 PASS CSV keeps per-sample UTC elapsed time unit and missing state
 PASS: 13 OBD scenarios
+PASS DATEX namespaces direction dates and coordinates preserved
+PASS expired future and suspended records are distinct
+PASS recurrences forecast and unknown validity never claimed active
+PASS malformed dates and positions never become valid measurements
+PASS old received old publication and future publication are not fresh
+PASS empty legitimate publication is not interpreted as fluid traffic
+PASS duplicate ids DTD wrong payload and wrong model rejected
+PASS search only reports proximity and excludes expired records
+PASS: 8 traffic event scenarios
+PASS profile backup round trip preserves catalog and stock dates
+PASS malformed UTF-8 backup rejected
+PASS oversized profile backup rejected
+PASS unsupported profile backup rejected
+PASS: 4 profile transfer scenarios

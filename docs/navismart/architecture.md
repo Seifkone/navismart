@@ -20,7 +20,7 @@ Les décisions prises ensuite par l’utilisateur précisent cette référence :
 
 `navismart/economy` est une bibliothèque Java 17 sans dépendance à Android ni au réseau.
 Son API accepte un profil véhicule, des trajets candidats et la politique de choix.
-Le simulateur en console utilise la même API. Le SDK CoMaps pourra l’appeler plus tard.
+Le simulateur en console et les adaptateurs Android utilisent la même API.
 
 `TripModel` porte les profils, les réserves d’énergie, les tronçons et les achats.
 `Estimate` porte les valeurs et leurs intervalles, leur état, leur source et leur date.
@@ -28,8 +28,9 @@ Le simulateur en console utilise la même API. Le SDK CoMaps pourra l’appeler 
 `DataFreshness` applique une durée de validité fournie par la source avec une horloge injectée.
 `ScenarioReader` lit un format de laboratoire UTF-8 configurable.
 
-Les adaptateurs futurs restent extérieurs à cette bibliothèque : routage natif
-CoMaps, import des données gouvernementales, stockage Android et OBD-II en lecture seule.
+Les adaptateurs de plateforme restent extérieurs à cette bibliothèque : routage
+natif CoMaps, réseau gouvernemental, stockage Android et Bluetooth en lecture seule.
+Les parseurs XML et OBD restent testables sans téléphone et sans serveur.
 Le téléchargement initial des cartes et de leurs mises à jour est distinct du calcul
 d’itinéraire : une fois les régions présentes sur le téléphone, le calcul reste local.
 
@@ -99,8 +100,9 @@ Les anciens fichiers Kotlin et leur clé commerciale restent hors du fork publi�
 
 ## Risques et étapes restantes
 
-1. CoMaps ne livre pas automatiquement l’optimisation économique : il faudra produire
-   plusieurs candidats et obtenir les distances réelles de chaque détour via son moteur natif.
+1. Le pont natif expose les distances routières de chaque étape. L’écran compare un
+   trajet initial à un arrêt carburant choisi ; la génération et le classement automatiques
+   de plusieurs détours restent à développer.
 2. Le trafic public n’est pas exhaustif. Son absence doit rester `UNKNOWN`, et les
    perturbations doivent être associées au bon segment et au bon sens de circulation.
 3. Les tarifs des péages ne sont pas contenus automatiquement dans une carte OSM.
@@ -112,9 +114,9 @@ Les anciens fichiers Kotlin et leur clé commerciale restent hors du fork publi�
 6. La compilation Android nécessite la chaîne native CoMaps, notamment NDK 28.2,
    CMake et Java 21. La validation du module Java n’atteste pas la compilation de l’APK.
 
-Le prochain raccordement logiciel sera un adaptateur des trajets CoMaps et un écran de
-profils véhicule, suivi des connecteurs gouvernementaux avec cache local. L’OBD-II et
-les conseils de rétrogradage resteront conditionnés aux données et essais réels.
+Les adaptateurs des trajets CoMaps, les profils, les deux caches gouvernementaux et
+le diagnostic OBD initial sont présents. La compatibilité matérielle, la calibration
+et les conseils de rétrogradage restent conditionnés aux données et essais réels.
 
 ## Deuxième jalon — profils et aperçu Android
 
@@ -125,20 +127,20 @@ L’API `Validity` permet de régler les durées de validité des stocks, consom
 
 `VehicleProfileRepository` stocke le catalogue dans les préférences privées Android.
 Les règles de sauvegarde CoMaps existantes n’incluent pas ces préférences. L’éditeur
-initial gère ajout, modification et sélection ; il ne propose pas encore suppression,
-import/export ou édition de plusieurs réservoirs thermiques pour le même véhicule.
+gère ajout, modification, sélection, suppression et import/export explicites. L’édition
+de plusieurs réservoirs thermiques pour le même véhicule reste à ajouter.
 
-`CoMapsEconomyAdapter` crée un tronçon à partir de `RoutingInfo.distToTarget` et
+Le premier `CoMapsEconomyAdapter` créait un tronçon à partir de `RoutingInfo.distToTarget` et
 `totalTimeInSeconds`, sans appel distant. La conversion respecte mètres, kilomètres,
 pieds et miles. Les chiffres de distance CoMaps peuvent être arrondis ; l’adaptateur
 ne leur attribue donc pas des bornes exactes. Les tarifs de péages et autres frais
 restent inconnus. L’aperçu affiche uniquement le coût de l’énergie consommée avec
-son caractère conditionnel et la faisabilité du stock renseigné.
+son caractère conditionnel et la faisabilité du stock renseigné. Le pont JNI récent
+préfère les métriques numériques non formatées de chaque sous-trajet ; la durée
+reste une estimation du modèle CoMaps, sans intervalle physique inventé.
 
-Les réglages intègrent la bibliothèque économique ; ils ne changent pas la route
-ni le guidage. Le prochain raccordement sera la production de vrais candidats et
-la prise en compte des détours vers les stations. Les prix publics, le cache et les
-perturbations routières viendront avec des adaptateurs séparés.
+La sélection d’une station peut désormais ajouter une étape au routeur local.
+Les comparaisons ne changent pas automatiquement le trajet ou les niveaux stockés.
 
 La version 2.1.5 de `desugar_jdk_libs`, déjà utilisée par CoMaps, couvre `Stream.toList()`
 pour les anciens Android selon son [journal officiel](https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md).
@@ -153,6 +155,8 @@ Les adaptateurs Android apportent cache atomique, sélection de station, ajout
 d’étape au routeur embarqué et diagnostic RFCOMM explicite. Voir
 [les fonctions et limites détaillées](fuel-and-obd.md).
 
-Le routage des détours, la couverture trafic, l’acquisition pendant le guidage et
-la validation physique des modèles restent des travaux séparés. Les écrans ne
-présentent pas ces fonctions comme achevées.
+L’écran compare un arrêt choisi au trajet initial, avec distances routières, achats
+partiels et frais explicites. Les avis Bison Futé ont leur cache et leur écran
+[documentés séparément](traffic-events.md). La génération automatique de détours,
+l’appariement du trafic au graphe, l’acquisition pendant le guidage et la validation
+physique des modèles restent des travaux séparés.

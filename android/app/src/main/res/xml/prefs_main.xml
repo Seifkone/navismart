@@ -33,6 +33,13 @@
     app:icon="@drawable/ic_car_enabled" />
 
   <PreferenceScreen
+    android:key="navismart_traffic"
+    android:title="@string/navismart_traffic_title"
+    android:summary="@string/navismart_traffic_summary"
+    app:fragment="app.organicmaps.settings.TrafficSettingsFragment"
+    app:icon="@drawable/ic_car_enabled" />
+
+  <PreferenceScreen
       android:key="pref_screen_nav"
       android:title="@string/prefs_group_route"
       app:fragment="app.organicmaps.settings.NavigationSettingsFragment"
