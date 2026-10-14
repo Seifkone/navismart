@@ -16,12 +16,12 @@ URL officielles Codeberg précédentes pour que la préparation native soit repr
 ## Prix des carburants
 
 Source primaire : [données publiques du site gouvernemental](https://www.prix-carburants.gouv.fr/index.php/rubrique/opendata/).
-Flux instantané : `https://donnees.roulez-eco.fr/opendata/instantane`.
+Flux instantané intégré avec ruptures : `https://donnees.roulez-eco.fr/opendata/instantane_ruptures`.
 Archive ZIP/XML téléchargeable ; données libres et gratuites sous Licence Ouverte.
 La page indique un flux de moins de dix minutes, mais chaque prix porte sa propre date.
 La date de téléchargement ne doit pas remplacer la date de déclaration du prix.
 
-Choix prévu : télécharger le flux national, stocker un cache local et chercher les stations
+Choix réalisé : télécharger le flux national, stocker un cache local et chercher les stations
 sur le téléphone. Cela évite d’envoyer les coordonnées du trajet à un service de recherche.
 Respecter la cadence de publication et appliquer une politique explicite de fraîcheur.
 Une rupture, une absence de prix ou un prix ancien ne doit pas devenir un prix nul.

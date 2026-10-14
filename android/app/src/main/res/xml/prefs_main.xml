@@ -19,6 +19,20 @@
     app:singleLineTitle="false" />
 
   <PreferenceScreen
+    android:key="navismart_obd"
+    android:title="@string/navismart_obd_title"
+    android:summary="@string/navismart_obd_summary"
+    app:fragment="app.organicmaps.settings.ObdSettingsFragment"
+    app:icon="@drawable/ic_car_enabled" />
+
+  <PreferenceScreen
+    android:key="navismart_fuel"
+    android:title="@string/navismart_fuel_title"
+    android:summary="@string/navismart_fuel_summary"
+    app:fragment="app.organicmaps.settings.FuelSettingsFragment"
+    app:icon="@drawable/ic_car_enabled" />
+
+  <PreferenceScreen
       android:key="pref_screen_nav"
       android:title="@string/prefs_group_route"
       app:fragment="app.organicmaps.settings.NavigationSettingsFragment"

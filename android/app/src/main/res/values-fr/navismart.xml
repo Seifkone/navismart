@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="navismart_fuel_title">NaviSmart · Stations carburant</string>
+  <string name="navismart_fuel_summary">Prix gouvernementaux, ruptures et cache hors ligne</string>
+  <string name="navismart_fuel_notice">Source : prix-carburants.gouv.fr, Licence Ouverte. Recherche dans un rayon de 30 km autour du départ du trajet ou du centre de la carte. Les distances affichées sont à vol d’oiseau, pas des détours routiers. Les prix peuvent changer ; leur ancienneté et les ruptures déclarées sont affichées. Au-delà de 7 jours, un prix est signalé périmé. Le téléchargement national ne transmet pas les coordonnées du trajet.</string>
+  <string name="navismart_fuel_refresh">Actualiser les prix gouvernementaux</string>
+  <string name="navismart_loading">Chargement…</string>
+  <string name="navismart_fuel_fetch_error">Actualisation impossible ou tentative trop récente. Le dernier cache local valide est conservé. Réessayer plus tard.</string>
+  <string name="navismart_fuel_no_cache">Aucune donnée carburant locale. Télécharger le flux national avec une connexion pour le consulter ensuite hors ligne.</string>
+  <string name="navismart_fuel_cache_date">Cache reçu : %1$s · %2$d stations</string>
+  <string name="navismart_fuel_no_ev">Ce flux gouvernemental ne fournit pas les prix de recharge électrique.</string>
+  <string name="navismart_fuel_no_matches">Aucun prix publié pour ce carburant dans la zone recherchée.</string>
+  <string name="navismart_station_detail">Identifiant gouvernemental : %1$s\nDate du prix : %2$s\nLes horaires et le stock à l’arrivée ne sont pas garantis. Ajouter une étape recalcule le trajet routier en local ; cela ne démontre pas encore un gain économique.</string>
+  <string name="navismart_show_map">Voir sur la carte</string>
+  <string name="navismart_add_fuel_stop">Ajouter une étape</string>
+  <string-array name="navismart_fuel_availability">
+    <item>Prix publié · horaires non vérifiés</item><item>Rupture déclarée</item><item>Fermeture déclarée</item><item>Disponibilité inconnue</item>
+  </string-array>
   <string name="navismart_vehicles_title">NaviSmart · Véhicules</string>
   <string name="navismart_vehicles_summary">Profils véhicule, consommation et retard autorisé</string>
   <string name="navismart_profile_notice">Laisser vides les valeurs inconnues. La consommation est exprimée par 100 km. Ces estimations manuelles ne calibrent pas le véhicule et ne modifient pas encore le choix du trajet. Pour les hybrides, la répartition des énergies doit être fournie pour chaque tronçon.</string>
@@ -51,5 +67,31 @@
   </string-array>
   <string-array name="navismart_feasibility">
     <item>Niveaux compatibles avec les valeurs renseignées</item><item>Faisabilité énergétique incertaine</item><item>Niveaux ou réserve insuffisants</item>
+  </string-array>
+<string name="navismart_obd_title">NaviSmart · Diagnostic OBD</string>
+  <string name="navismart_obd_summary">Capteurs Bluetooth classique et mesures locales</string>
+  <string name="navismart_obd_notice">Associez la prise dans les réglages Android et fermez les autres applications OBD. Capteurs standards uniquement, selon le véhicule. La session s’arrête en quittant cet écran. Les mesures restent sur ce téléphone jusqu’à leur export. Le niveau du réservoir est un pourcentage, pas des litres ; le débit d’air n’est pas converti en consommation de carburant. La calibration du véhicule reste à valider.</string>
+  <string name="navismart_obd_connect">Choisir la prise associée et se connecter</string>
+  <string name="navismart_obd_stop">Arrêter les mesures et déconnecter</string>
+  <string name="navismart_obd_permission">L’autorisation Bluetooth est nécessaire pour se connecter.</string>
+  <string name="navismart_obd_enable">Activez le Bluetooth dans les réglages Android.</string>
+  <string name="navismart_obd_pair">Aucun appareil associé. Associez la prise OBD dans les réglages Android.</string>
+  <string name="navismart_obd_device">Choisir votre prise OBD</string>
+  <string name="navismart_obd_failed">Échec de la connexion ou de l’initialisation. Fermez les autres applications OBD et vérifiez le contact.</string>
+  <string name="navismart_obd_stopped">Session arrêtée. Les valeurs affichées sont historiques, pas en direct.</string>
+  <string name="navismart_obd_logs">Sessions de mesures locales</string>
+  <string name="navismart_obd_no_logs">Aucune session enregistrée.</string>
+  <string name="navismart_obd_export">Exporter en CSV</string>
+  <string name="navismart_obd_exported">CSV exporté vers la destination choisie.</string>
+  <string name="navismart_obd_delete">Supprimer la session</string>
+  <string name="navismart_obd_delete_confirm">Supprimer définitivement cette session de mesures locale ?</string>
+  <string-array name="navismart_obd_signals">
+    <item>Charge moteur calculée</item><item>Température du liquide de refroidissement</item><item>Correction carburant courte durée, banc 1</item><item>Correction carburant longue durée, banc 1</item><item>Pression du collecteur d’admission</item><item>Régime moteur</item><item>Vitesse du véhicule</item><item>Température d’air à l’admission</item><item>Débit massique d’air</item><item>Position du papillon</item><item>Niveau du réservoir</item><item>Pourcentage d’éthanol déclaré</item><item>Débit de carburant déclaré par le calculateur</item>
+  </string-array>
+  <string-array name="navismart_obd_states">
+    <item>Disponible</item><item>Indisponible</item><item>Réponse invalide</item><item>Réponses contradictoires des calculateurs</item>
+  </string-array>
+  <string-array name="navismart_obd_status">
+    <item>Connexion…</item><item>Recherche des capteurs disponibles…</item><item>Enregistrement local. La fréquence dépend du temps de réponse de la prise.</item><item>Aucun capteur standard disponible.</item><item>Session arrêtée. Les valeurs affichées sont historiques.</item><item>Échec de connexion, de la prise ou de l’enregistrement local. Session arrêtée.</item><item>Limite atteinte (1 h, 5 Mio par session, 100 sessions ou 50 Mio au total). Exportez ou supprimez des sessions pour libérer de la place.</item>
   </string-array>
 </resources>

@@ -14,7 +14,7 @@ env:
   SKIP_MAP_DOWNLOAD: true
 jobs:
   apk:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
@@ -28,6 +28,11 @@ jobs:
           sudo apt-get install -y ninja-build python3-venv qt6-base-dev qt6-declarative-dev qt6-positioning-dev libqt6svg6-dev optipng libfreetype-dev libharfbuzz-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev zlib1g-dev
       - name: Configure CoMaps resources
         run: ./configure.sh
+      - name: Cache native compilation
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: navismart-arm64-fdroid
+          max-size: 750M
       - name: Verify economy and profiles
         working-directory: android
         run: ./gradlew --no-daemon :economy:check
@@ -36,6 +41,9 @@ jobs:
         run: ./gradlew --no-daemon -Parm64 -PdisableHWAsan -Pnjobs=2 :app:testFdroidDebugUnitTest --tests 'app.organicmaps.navismart.*Test'
       - name: Build arm64 APK
         working-directory: android
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: ./gradlew --no-daemon -Parm64 -PdisableHWAsan -Pnjobs=2 :app:assembleFdroidDebug
       - name: Upload development APK
         uses: actions/upload-artifact@v6

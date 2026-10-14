@@ -143,3 +143,16 @@ perturbations routières viendront avec des adaptateurs séparés.
 La version 2.1.5 de `desugar_jdk_libs`, déjà utilisée par CoMaps, couvre `Stream.toList()`
 pour les anciens Android selon son [journal officiel](https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md).
 Le module reste compilé en Java 17 ; la chaîne Android utilise Java 21.
+
+## Troisième jalon — stations et acquisition
+
+Les paquets indépendants `com.navismart.fuel` et `com.navismart.obd` ajoutent
+l’import gouvernemental, les ruptures, la recherche locale et les candidats de
+ravitaillement, puis le protocole OBD standard, le décodage et le format CSV.
+Les adaptateurs Android apportent cache atomique, sélection de station, ajout
+d’étape au routeur embarqué et diagnostic RFCOMM explicite. Voir
+[les fonctions et limites détaillées](fuel-and-obd.md).
+
+Le routage des détours, la couverture trafic, l’acquisition pendant le guidage et
+la validation physique des modèles restent des travaux séparés. Les écrans ne
+présentent pas ces fonctions comme achevées.

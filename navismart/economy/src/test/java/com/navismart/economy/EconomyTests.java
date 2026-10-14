@@ -236,6 +236,8 @@ public final class EconomyTests
     });
     System.out.println("PASS: " + passed + " acceptance scenarios");
     ProfileTests.run();
+    FuelTests.run();
+    ObdTests.run();
   }
 
   private static Vehicle hybrid()

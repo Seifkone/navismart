@@ -59,3 +59,33 @@ PASS invalid observation date is a controlled format error
 PASS observation lifetimes can be set by the calling adapter
 PASS empty name and nonfinite consumption rejected
 PASS: 20 vehicle profile scenarios
+PASS government coordinates and euro prices preserve their units
+PASS missing price is unknown, not zero
+PASS stale price keeps original date
+PASS future and undated prices cannot be fresh
+PASS ambiguous daylight-saving time remains unknown
+PASS zero negative malformed and nonfinite prices rejected
+PASS active outage and closure override price
+PASS past outages end and malformed intervals remain uncertain
+PASS offline old snapshot does not promise stock availability
+PASS invalid coordinates never locate a station at zero
+PASS duplicate station and fuel identifiers fail safely
+PASS external entities internal DTD and unexpected roots rejected
+PASS ZIP with XML and non-UTF8 declaration parsed without guessing charset
+PASS geographical shortlist is deterministic and not a road route
+PASS refuel plans respect reachability capacity and time
+PASS: 15 fuel and refuelling scenarios
+PASS OBD RPM example matches ELM datasheet
+PASS zero RPM is a measurement, not missing data
+PASS negative temperatures and trims are retained
+PASS standard sensor units remain explicit
+PASS NO DATA stays unavailable
+PASS conflicting ECUs never select arbitrary engine value
+PASS malformed truncated unrelated and headered data rejected
+PASS discovery masks union ECUs and preserve continuation bits
+PASS all-zero support is valid but no measurements invented
+PASS outgoing whitelist excludes ECU writes and VIN
+PASS prompt framing preserves next response
+PASS timeouts cancellation response limits and command guard
+PASS CSV keeps per-sample UTC elapsed time unit and missing state
+PASS: 13 OBD scenarios
