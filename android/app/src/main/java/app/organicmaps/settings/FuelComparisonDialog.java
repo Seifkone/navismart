@@ -75,7 +75,7 @@ final class FuelComparisonDialog
           message.append("\n\n").append(assessment.route().name()).append("\n")
               .append(context.getString(R.string.navismart_comparison_values, amount(assessment.distanceKm().expected(), "km"),
                   amount(assessment.durationMinutes().expected(), "min"), amount(assessment.consumedEnergyCostEuro().expected(), "€"),
-                  amount(assessment.immediateExpenseEuro().expected(), "€"), amount(assessment.economicCostEuro().expected(), "€"),
+                  amount(assessment.energyPurchasesEuro().expected(), "€"), amount(assessment.immediateExpenseEuro().expected(), "€"), amount(assessment.economicCostEuro().expected(), "€"),
                   amount(assessment.remainingStock().get(store.id()), "L")))
               .append("\n").append(feasibility).append("\n").append(timeState);
         }

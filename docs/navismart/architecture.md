@@ -158,5 +158,6 @@ d’étape au routeur embarqué et diagnostic RFCOMM explicite. Voir
 L’écran compare un arrêt choisi au trajet initial, avec distances routières, achats
 partiels et frais explicites. Les avis Bison Futé ont leur cache et leur écran
 [documentés séparément](traffic-events.md). La génération automatique de détours,
-l’appariement du trafic au graphe, l’acquisition pendant le guidage et la validation
-physique des modèles restent des travaux séparés.
+l’appariement du trafic au graphe et la validation physique des modèles restent
+des travaux séparés. La collecte OBD peut maintenant continuer pendant le guidage
+dans un service Android explicite avec notification, arrêt et journal privé borné.

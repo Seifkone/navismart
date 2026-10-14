@@ -16,14 +16,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import app.organicmaps.R;
-import app.organicmaps.navismart.ObdSession;
+import app.organicmaps.navismart.ObdRecordingService;
 import com.navismart.obd.ObdProtocol;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
@@ -31,14 +30,16 @@ import java.util.concurrent.Executors;
 public final class ObdSettingsFragment extends BaseXmlSettingsFragment
 {
   private final Handler mMain = new Handler(Looper.getMainLooper());
-  private final EnumMap<ObdProtocol.Signal, ObdProtocol.Sample> mSamples = new EnumMap<>(ObdProtocol.Signal.class);
   private final java.util.concurrent.ExecutorService mExportWorker = Executors.newSingleThreadExecutor();
-  private ObdSession mSession;
   private File mExportFile;
   private String mMessage;
-  private int mGeneration;
+  private long mRenderedGeneration = -1;
+  private com.navismart.obd.ObdRecordingState.Status mRenderedStatus;
+  private final Runnable mObserver = this::refreshLive;
+  private final ActivityResultLauncher<String> mNotifications = registerForActivityResult(
+      new ActivityResultContracts.RequestPermission(), granted -> selectDevice());
   private final ActivityResultLauncher<String> mPermission = registerForActivityResult(
-      new ActivityResultContracts.RequestPermission(), granted -> { if (granted) selectDevice(); else message(R.string.navismart_obd_permission); });
+      new ActivityResultContracts.RequestPermission(), granted -> { if (granted) notificationsThenSelect(); else message(R.string.navismart_obd_permission); });
   private final ActivityResultLauncher<String> mExport = registerForActivityResult(
       new ActivityResultContracts.CreateDocument("text/csv"), uri -> {
         File file = mExportFile; mExportFile = null;
@@ -60,23 +61,33 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
       });
   @Override protected int getXmlResources() { return R.xml.prefs_navismart_vehicles; }
   @Override public void onCreatePreferences(Bundle state, String root)
-  { super.onCreatePreferences(state, root); render(); }
+  {
+    super.onCreatePreferences(state, root);
+    String pending = state == null ? null : state.getString("export_log");
+    if (pending != null && pending.matches("obd-[0-9a-fA-F-]+\\.csv"))
+      mExportFile = new File(new File(requireContext().getFilesDir(), "navismart-obd"), pending);
+    render();
+  }
   private void message(int res) { if (isAdded()) { mMessage = getString(res); render(); } }
   private void render()
   {
     if (!isAdded()) return;
     var screen = getPreferenceScreen(); screen.removeAll();
     info(getString(R.string.navismart_obd_notice));
+    var recording = ObdRecordingService.snapshot();
+    mRenderedGeneration = recording.generation(); mRenderedStatus = recording.status();
+    info(getResources().getStringArray(R.array.navismart_obd_status)[recording.status().ordinal()]);
     if (mMessage != null) info(mMessage);
-    action(getString(mSession == null ? R.string.navismart_obd_connect : R.string.navismart_obd_stop), () -> {
-      if (mSession != null) { stop(); message(R.string.navismart_obd_stopped); }
+    action(getString(recording.active() ? R.string.navismart_obd_stop : R.string.navismart_obd_connect), () -> {
+      if (ObdRecordingService.snapshot().active()) { ObdRecordingService.stopRecording(); message(R.string.navismart_obd_stopped); }
       else if (Build.VERSION.SDK_INT >= 31 && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
         mPermission.launch(Manifest.permission.BLUETOOTH_CONNECT);
-      else selectDevice();
+      else notificationsThenSelect();
     });
     action(getString(R.string.navismart_obd_logs), this::showLogs);
-    for (var sample : mSamples.values())
+    for (var signal : ObdProtocol.Signal.values())
     {
+      var sample = recording.samples().get(signal); if (sample == null) continue;
       var p = new Preference(requireContext()); p.setKey("obd_" + sample.signal().name());
       p.setTitle(getResources().getStringArray(R.array.navismart_obd_signals)[sample.signal().ordinal()]);
       p.setSummary(sampleText(sample));
@@ -86,7 +97,7 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
   @SuppressLint("MissingPermission")
   private void selectDevice()
   {
-    if (!isAdded() || mSession != null) return;
+    if (!isAdded() || ObdRecordingService.snapshot().active()) return;
     try
     {
       BluetoothManager manager = (BluetoothManager) requireContext().getSystemService(android.content.Context.BLUETOOTH_SERVICE);
@@ -104,43 +115,42 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
   }
   private void start(BluetoothDevice device)
   {
-    stop(); mSamples.clear(); int generation = ++mGeneration;
-    mSession = new ObdSession(requireContext().getApplicationContext(), new ObdSession.Listener() {
-      public void status(ObdSession.Status status)
-      {
-        mMain.post(() -> {
-          if (!isAdded() || generation != mGeneration) return;
-          mMessage = getResources().getStringArray(R.array.navismart_obd_status)[status.ordinal()];
-          if (status.ordinal() >= ObdSession.Status.NO_SENSORS.ordinal())
-          { mSession = null; }
-          render();
-        });
-      }
-      public void sample(ObdProtocol.Sample sample)
-      {
-        mMain.post(() -> {
-          if (!isAdded() || generation != mGeneration) return;
-          mSamples.put(sample.signal(), sample);
-          Preference row = findPreference("obd_" + sample.signal().name());
-          if (row == null) render(); else row.setSummary(sampleText(sample));
-        });
-      }
-    });
-    mSession.start(device); render();
+    mMessage = null; ObdRecordingService.start(requireContext(), device); render();
   }
-  private void stop()
+  private void notificationsThenSelect()
   {
-    mGeneration++;
-    if (mSession != null) { mSession.close(); mSession = null; }
+    if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+      mNotifications.launch(Manifest.permission.POST_NOTIFICATIONS);
+    else selectDevice();
   }
   private String sampleText(ObdProtocol.Sample sample)
   {
     return (sample.value() == null ? getResources().getStringArray(R.array.navismart_obd_states)[sample.state().ordinal()]
         : String.format(Locale.getDefault(), "%.2f %s", sample.value(), sample.signal().unit)) + "\n" + sample.observedAt();
   }
+  private void refreshLive()
+  {
+    if (!isAdded()) return;
+    var recording = ObdRecordingService.snapshot();
+    if (mMessage != null || recording.generation() != mRenderedGeneration || recording.status() != mRenderedStatus)
+    { mMessage = null; render(); return; }
+    for (var sample : recording.samples().values())
+    {
+      Preference row = findPreference("obd_" + sample.signal().name());
+      if (row == null) { render(); return; }
+      row.setSummary(sampleText(sample));
+    }
+  }
   private void showLogs()
   {
-    stop(); render();
+    if (ObdRecordingService.snapshot().active())
+    {
+      new AlertDialog.Builder(requireContext()).setMessage(R.string.navismart_obd_stop_for_logs)
+          .setPositiveButton(R.string.navismart_obd_stop, (d,w) -> { ObdRecordingService.stopRecording(); showLogs(); })
+          .setNegativeButton(android.R.string.cancel, null).show();
+      return;
+    }
+    render();
     File directory = new File(requireContext().getFilesDir(), "navismart-obd");
     File[] logs = directory.listFiles((dir, name) -> name.endsWith(".csv"));
     if (logs == null || logs.length == 0) { message(R.string.navismart_obd_no_logs); return; }
@@ -159,7 +169,10 @@ public final class ObdSettingsFragment extends BaseXmlSettingsFragment
   private void info(String text) { var p = new Preference(requireContext()); p.setSummary(text); p.setSelectable(false); getPreferenceScreen().addPreference(p); }
   private void action(String text, Runnable action)
   { var p = new Preference(requireContext()); p.setTitle(text); p.setOnPreferenceClickListener(ignored -> { action.run(); return true; }); getPreferenceScreen().addPreference(p); }
-  @Override public void onStop() { stop(); if (!mSamples.isEmpty()) mMessage = getString(R.string.navismart_obd_stopped); super.onStop(); }
+  @Override public void onStart() { super.onStart(); ObdRecordingService.observe(mObserver); }
+  @Override public void onStop() { ObdRecordingService.removeObserver(mObserver); super.onStop(); }
   @Override public void onResume() { super.onResume(); render(); }
-  @Override public void onDestroy() { stop(); mExportWorker.shutdown(); super.onDestroy(); }
+  @Override public void onDestroy() { ObdRecordingService.removeObserver(mObserver); mExportWorker.shutdown(); super.onDestroy(); }
+  @Override public void onSaveInstanceState(Bundle state)
+  { if (mExportFile != null) state.putString("export_log", mExportFile.getName()); super.onSaveInstanceState(state); }
 }

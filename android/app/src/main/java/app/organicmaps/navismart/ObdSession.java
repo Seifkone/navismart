@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import com.navismart.obd.ElmChannel;
 import com.navismart.obd.ObdCsv;
 import com.navismart.obd.ObdProtocol;
+import com.navismart.obd.ObdRecordingState.Status;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,9 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/** Explicit foreground diagnostic session. Closing the screen closes the socket and log. */
+/** Read-only transport and bounded log, owned by the explicit recording service. */
 public final class ObdSession implements AutoCloseable
 {
-  public enum Status { CONNECTING, DISCOVERING, READING, NO_SENSORS, STOPPED, FAILED, LIMIT_REACHED }
   public interface Listener
   {
     void status(Status status);
@@ -78,8 +78,9 @@ public final class ObdSession implements AutoCloseable
         // Bound retained local data; never silently delete old measurements.
         File[] logs = mDirectory.listFiles((dir, name) -> name.endsWith(".csv"));
         long size = 0; if (logs != null) for (File log : logs) size += log.length();
-        if (size >= 50L * 1024 * 1024 || (logs != null && logs.length >= 100))
+        if (size + 1024 >= 50L * 1024 * 1024 || (logs != null && logs.length >= 100))
         { mListener.status(Status.LIMIT_REACHED); return; }
+        long sessionLimit = Math.min(5L * 1024 * 1024, 50L * 1024 * 1024 - size);
         File file = new File(mDirectory, "obd-" + UUID.randomUUID() + ".csv");
         long started = SystemClock.elapsedRealtime();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)))
@@ -95,6 +96,7 @@ public final class ObdSession implements AutoCloseable
             for (var signal : signals)
             {
               if (mClosed) break;
+              if (file.length() + 1024 >= sessionLimit) { mListener.status(Status.LIMIT_REACHED); return; }
               String reply = channel.request(signal.command(), 5000, () -> mClosed);
               var sample = ObdProtocol.decode(signal, reply, Instant.now(), SystemClock.elapsedRealtime() - started);
               synchronized (mLogLock)
@@ -106,7 +108,7 @@ public final class ObdSession implements AutoCloseable
               // Conservative rate for unknown adapters: at most 5 requests/sec, usually less.
               Thread.sleep(200);
             }
-            if (SystemClock.elapsedRealtime() - started >= 60 * 60 * 1000L || file.length() >= 5 * 1024 * 1024)
+            if (SystemClock.elapsedRealtime() - started >= 60 * 60 * 1000L || file.length() >= sessionLimit)
             { mListener.status(Status.LIMIT_REACHED); return; }
           }
         }

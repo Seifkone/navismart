@@ -62,8 +62,13 @@ n’est pas converti en litres. Le débit d’air n’est pas converti en consom
 par un rapport air/carburant fixe. Un débit déclaré n’est pas une calibration
 physique validée.
 
-La session initiale est réservée à l’écran de diagnostic : elle s’arrête en le
-quittant, en cas d’erreur, après une heure ou cinq Mio. Au maximum cent sessions
+La collecte démarre explicitement dans l’écran OBD puis continue pendant le guidage
+via un service Android `connectedDevice`. Une notification propose l’arrêt ; si
+les notifications sont refusées, l’arrêt reste accessible dans l’écran OBD et les
+applications actives Android. Aucune connexion n’est relancée au démarrage du
+téléphone ou après destruction du processus. Fermer la tâche de l’application,
+une erreur, une déconnexion, une heure ou cinq Mio arrêtent la collecte. Le verrou
+CPU est borné et libéré à l’arrêt. Au maximum cent sessions
 et cinquante Mio sont conservés sans suppression automatique. Chaque CSV privé
 contient les horodatages UTC et monotoniques individuels, PID, unité et état.
 L’export utilise le sélecteur de destination Android ; une suppression demande
@@ -71,8 +76,8 @@ confirmation. Les règles de sauvegarde existantes excluent ces fichiers privés
 
 Cette version prépare l’acquisition et les essais de compatibilité. Elle n’atteste
 aucun essai sur véhicule et n’émet pas encore de conseil de décélération ou de
-rétrogradage. La collecte pendant le guidage et les profils constructeur restent
-à ajouter après validation de cette connexion.
+rétrogradage. Les profils constructeur restent à ajouter après validation de la
+connexion standard. L’export et la suppression demandent d’abord l’arrêt de la collecte.
 
 ## Références techniques
 

@@ -70,7 +70,7 @@
   </string-array>
 <string name="navismart_obd_title">NaviSmart · Diagnostic OBD</string>
   <string name="navismart_obd_summary">Capteurs Bluetooth classique et mesures locales</string>
-  <string name="navismart_obd_notice">Associez la prise dans les réglages Android et fermez les autres applications OBD. Capteurs standards uniquement, selon le véhicule. La session s’arrête en quittant cet écran. Les mesures restent sur ce téléphone jusqu’à leur export. Le niveau du réservoir est un pourcentage, pas des litres ; le débit d’air n’est pas converti en consommation de carburant. La calibration du véhicule reste à valider.</string>
+  <string name="navismart_obd_notice">Associez la prise dans les réglages Android et fermez les autres applications OBD. Capteurs standards uniquement, selon le véhicule. Après démarrage, la collecte continue pendant le guidage, avec notification et bouton Arrêter. Elle s’arrête en cas de déconnexion, erreur, limite atteinte ou fermeture de la tâche de l’application. Les mesures restent sur ce téléphone jusqu’à leur export. Le niveau est un pourcentage, pas des litres ; le débit d’air ne devient pas une consommation de carburant. La calibration du véhicule reste à valider.</string>
   <string name="navismart_obd_connect">Choisir la prise associée et se connecter</string>
   <string name="navismart_obd_stop">Arrêter les mesures et déconnecter</string>
   <string name="navismart_obd_permission">L’autorisation Bluetooth est nécessaire pour se connecter.</string>
@@ -107,7 +107,7 @@
   <string name="navismart_compare_invalid">Vérifiez le véhicule actif, le carburant correspondant, le prix récent, le trajet inchangé et les nombres positifs ou nuls. La quantité doit dépasser zéro. Cette comparaison accepte un seul réservoir de carburant.</string>
   <string name="navismart_compare_conditional">Estimations conditionnelles selon votre consommation et les durées routières modélisées, avec une incertitude non chiffrée. Aucune recommandation garantie. Le stock déclaré, les horaires et la disponibilité à l’arrivée restent à vérifier. Ces résultats ne changent ni le trajet ni le niveau du véhicule. Achat et énergie consommée sont deux vues différentes du coût : ne les additionnez pas.</string>
   <string name="navismart_direct_route">Trajet initial</string>
-  <string name="navismart_comparison_values">Distance routière : %1$s\nDurée avec arrêt : %2$s\nÉnergie consommée : %3$s\nDépense immédiate avec frais : %4$s\nCoût économique avec frais : %5$s\nCarburant restant : %6$s</string>
+  <string name="navismart_comparison_values">Distance routière : %1$s\nDurée avec arrêt : %2$s\nÉnergie consommée : %3$s\nMontant acheté en carburant : %4$s\nDépense immédiate avec frais : %5$s\nCoût économique avec frais : %6$s\nCarburant restant : %7$s</string>
   <string name="navismart_time_allowance">Temps supplémentaire admis par rapport au candidat le plus rapide : %1$s</string>
   <string-array name="navismart_time_states">
     <item>Temps central dans la limite admise</item><item>Respect du temps incertain</item><item>Temps supplémentaire dépassé</item><item>Respect du temps inconnu</item>
@@ -138,4 +138,5 @@
   <string name="navismart_transfer_error">Échec du transfert. Les profils existants ont été conservés.</string>
   <string name="navismart_delete_profile">Supprimer le profil</string>
   <string name="navismart_delete_profile_confirm">Supprimer définitivement ce profil véhicule ?</string>
+  <string name="navismart_obd_stop_for_logs">Consulter les sessions enregistrées demande d’arrêter la collecte en cours. L’arrêter maintenant ?</string>
 </resources>

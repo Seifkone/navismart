@@ -2,8 +2,9 @@
 
 ## Travaux du 14 octobre 2026
 
-- 101 scénarios Java indépendants réussis : 39 économie, 20 profils, 17 carburants,
-  13 OBD, huit événements routiers et quatre transferts de profils.
+- 105 scénarios Java indépendants réussis : 39 économie, 20 profils, 17 carburants,
+  13 protocoles OBD, quatre cycles de collecte, huit événements routiers et quatre
+  transferts de profils.
 - Vérification Gradle indépendante réussie avec Java 17 ; le premier essai sous
   bac à sable ne pouvait pas joindre son propre processus Gradle sur localhost.
   Le même contrôle avec les permissions locales nécessaires est réussi.
@@ -19,6 +20,12 @@ les conversions de sous-trajets et l’invalidation d’une comparaison devenue 
 Aucun de ces contrôles ne remplace l’installation, le guidage et la connexion OBD
 sur véhicule. Les flux réels ne sont pas intégrés aux tests automatiques : ceux-ci
 restent déterministes et hors ligne.
+
+La collecte OBD dispose ensuite d’un service de premier plan `connectedDevice`,
+d’un démarrage explicite, d’une notification d’arrêt et de limites de conservation.
+Ses tests de cycle vérifient les réponses tardives, les sessions remplacées et
+les valeurs historiques. Les contraintes de permission et de vie du service Android
+doivent encore être vérifiées sur appareil.
 
 ## Historique du 13 octobre 2026
 

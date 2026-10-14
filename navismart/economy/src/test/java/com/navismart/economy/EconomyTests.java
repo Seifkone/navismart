@@ -240,6 +240,7 @@ public final class EconomyTests
     ObdTests.run();
     TrafficTests.run();
     ProfileTransferTests.run();
+    ObdRecordingTests.run();
   }
 
   private static Vehicle hybrid()

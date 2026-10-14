@@ -105,3 +105,8 @@ PASS malformed UTF-8 backup rejected
 PASS oversized profile backup rejected
 PASS unsupported profile backup rejected
 PASS: 4 profile transfer scenarios
+PASS recording lifecycle rejects samples before discovery and backwards status
+PASS recording snapshots are immutable and out-of-order samples rejected
+PASS stop retains historical values and rejects late callbacks
+PASS replacement session discards previous data and terminal states remain terminal
+PASS: 4 OBD recording lifecycle scenarios

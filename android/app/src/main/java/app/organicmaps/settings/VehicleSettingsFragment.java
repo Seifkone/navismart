@@ -44,8 +44,14 @@ public final class VehicleSettingsFragment extends BaseXmlSettingsFragment
     var resolver = requireContext().getContentResolver();
     mTransferWorker.execute(() -> {
       boolean success = false;
-      try (var output = resolver.openOutputStream(uri, "w"))
-      { if (output == null) throw new IOException("No destination"); com.navismart.economy.ProfileTransfer.write(mRepository.load(), output); success = true; }
+      try
+      {
+        var prepared = new java.io.ByteArrayOutputStream();
+        com.navismart.economy.ProfileTransfer.write(mRepository.load(), prepared);
+        try (var output = resolver.openOutputStream(uri, "w"))
+        { if (output == null) throw new IOException("No destination"); output.write(prepared.toByteArray()); output.flush(); }
+        success = true;
+      }
       catch (IOException | RuntimeException ignored) {}
       transferResult(success);
     });

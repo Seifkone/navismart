@@ -4,8 +4,9 @@
 
 Le modèle du téléphone, sa version Android et la référence de l’adaptateur utilisé
 seront consignés dans les notes locales des essais, hors du dépôt public.
-Le protocole série, les services/caractéristiques Bluetooth et les PID accessibles
-devront être identifiés sur le matériel réel, sans imposer des UUID génériques non vérifiés.
+Les PID réellement accessibles et la stabilité de la liaison devront être identifiés
+sur le matériel réel. La première implémentation utilise le service série standard
+RFCOMM/SPP de Bluetooth classique ; elle ne devine pas de caractéristiques BLE.
 
 ## Essais du jalon Android
 
@@ -25,14 +26,46 @@ Ces essais restent à exécuter sur le téléphone ; ils ne sont pas déclarés 
 8. Vérifier les cas inconnus et invalides : consommation vide, bornes inversées, stock
    supérieur à la capacité, changement de carburant non confirmé, ancien niveau d’énergie.
 
-La distance fournie par le résumé CoMaps est parfois arrondie. Un affichage approximatif
-ne doit pas être interprété comme une mesure de consommation du trajet.
+L’aperçu récent préfère les distances routières numériques de chaque étape. Un
+affichage approximatif ne doit pas être interprété comme une mesure de consommation.
+
+## Stations et comparaison
+
+1. Télécharger les prix dans Réglages → NaviSmart · Carburants. Vérifier carburant,
+   date du prix, état de fraîcheur, rupture éventuelle et position sur la carte.
+2. Réouvrir sans réseau : le cache doit rester disponible et conserver les dates.
+3. Préparer un trajet sans étape, ajouter une station, attendre le recalcul et revenir
+   à la comparaison. Utiliser un profil à un seul réservoir du même carburant.
+4. Saisir litres achetés, durée et frais. Vérifier que frais vides produisent un coût
+   total inconnu ; zéro doit être saisi explicitement. Vérifier réserve avant station,
+   capacité après achat, stock final et limite de temps.
+5. Changer le trajet : la comparaison précédente doit être invalidée. Un achat simulé
+   ne doit pas modifier le niveau enregistré du véhicule.
+
+## Avis routiers et sauvegardes
+
+Télécharger les avis Bison Futé, vérifier publication, horaires et distinction entre
+avis futur et avis listé. Sans cache ou sans avis à proximité, l’écran ne doit pas
+annoncer une circulation fluide. Le calcul CoMaps n’est pas modifié par ces avis.
+
+Exporter les profils puis restaurer le fichier après confirmation. Vérifier les
+dates de niveaux, le véhicule actif et les unités. Annuler un remplacement doit
+laisser les profils en place. Un fichier invalide doit être refusé sans effacement.
 
 ## Première acquisition OBD-II
 
-La fonction Bluetooth/OBD n’est pas encore incluse dans cet APK. La phase d’acquisition
-devra commencer par une identification de l’adaptateur et une découverte des mesures
-réellement disponibles, avec journal de diagnostic local. Elle sera en lecture seule.
+L’écran Diagnostic OBD inclut la connexion Bluetooth classique aux appareils déjà
+associés dans Android. Fermer l’autre application OBD, sélectionner la prise puis
+vérifier les capteurs annoncés. L’absence de donnée reste distincte d’une valeur
+nulle. Arrêter doit fermer la connexion ; les dernières valeurs doivent être
+signalées comme historiques. Vérifier ensuite que la collecte continue
+pendant le guidage et écran éteint, qu’une notification permet l’arrêt et que la
+fermeture de la tâche ferme la connexion. Un redémarrage ne doit pas reconnecter
+automatiquement la prise.
+
+Exporter une session CSV, vérifier unités, horodatages et états, puis confirmer que
+les fichiers restent privés tant qu’aucun export n’est choisi. Une suppression
+demande confirmation. Ces opérations n’effacent aucun défaut et ne codent pas le véhicule.
 
 Les premiers essais devront établir la stabilité de la connexion, le protocole de
 réponse, les unités et la fréquence de chaque mesure. L’absence d’un PID ne vaudra

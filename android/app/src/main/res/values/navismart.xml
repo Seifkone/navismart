@@ -70,7 +70,7 @@
   </string-array>
 <string name="navismart_obd_title">NaviSmart · OBD diagnostics</string>
   <string name="navismart_obd_summary">Classic Bluetooth sensors and local measurements</string>
-  <string name="navismart_obd_notice">Pair your adapter in Android settings first and close other OBD apps. Standard sensors only; availability depends on the vehicle. This diagnostic session stops when you leave this screen. Measurements stay on this device until you export them. Fuel level is a percentage, not litres; air flow is not converted into fuel consumption. Vehicle calibration has not yet been validated.</string>
+  <string name="navismart_obd_notice">Pair your adapter in Android settings first and close other OBD apps. Standard sensors only; availability depends on the vehicle. After you start, recording continues during guidance with a notification and Stop action. It stops on disconnect, an error, its recording limit or when the app task is dismissed. Measurements stay on this device until export. Fuel level is a percentage, not litres; air flow is not converted into fuel consumption. Vehicle calibration has not yet been validated.</string>
   <string name="navismart_obd_connect">Select paired adapter and connect</string>
   <string name="navismart_obd_stop">Stop recording and disconnect</string>
   <string name="navismart_obd_permission">Bluetooth permission is required to connect.</string>
@@ -107,7 +107,7 @@
   <string name="navismart_compare_invalid">Check the active vehicle, matching fuel, fresh station price, unchanged route and non-negative numbers. Quantity must exceed zero. Only one fuel tank is supported in this comparison.</string>
   <string name="navismart_compare_conditional">Conditional estimates using manual consumption and modelled road times, with unquantified uncertainty. No guaranteed recommendation. Reported stock, opening hours and availability at arrival remain unverified. These results do not change the route or stored vehicle level. Purchases and consumed energy are separate cost views: do not add them together.</string>
   <string name="navismart_direct_route">Original route</string>
-  <string name="navismart_comparison_values">Road distance: %1$s\nTime, including stop: %2$s\nEnergy consumed: %3$s\nImmediate expense, including fees: %4$s\nEconomic cost, including fees: %5$s\nRemaining fuel: %6$s</string>
+  <string name="navismart_comparison_values">Road distance: %1$s\nTime, including stop: %2$s\nEnergy consumed: %3$s\nFuel purchase amount: %4$s\nImmediate expense, including fees: %5$s\nEconomic cost, including fees: %6$s\nRemaining fuel: %7$s</string>
   <string name="navismart_time_allowance">Extra time allowed relative to the fastest candidate: %1$s</string>
   <string-array name="navismart_time_states">
     <item>Within time allowance using central estimates</item><item>Time allowance uncertain</item><item>Time allowance exceeded</item><item>Time allowance unknown</item>
@@ -138,4 +138,5 @@
   <string name="navismart_transfer_error">Profile transfer failed. Existing profiles were kept.</string>
   <string name="navismart_delete_profile">Delete profile</string>
   <string name="navismart_delete_profile_confirm">Permanently delete this vehicle profile?</string>
+  <string name="navismart_obd_stop_for_logs">Opening saved sessions requires stopping the current recording. Stop it now?</string>
 </resources>
