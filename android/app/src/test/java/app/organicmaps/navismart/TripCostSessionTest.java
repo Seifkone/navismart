@@ -38,4 +38,12 @@ public class TripCostSessionTest {
     assertThrows(UnsupportedOperationException.class,()->TripCostSession.variants().clear());
     TripCostSession.scope(null,1,"v",NOW);assertTrue(TripCostSession.variants().isEmpty());
   }
+  @Test public void exactDirectedGeometryControlsPriceReuse() {
+    var a=new com.navismart.fuel.FuelData.Point(48,2);var b=new com.navismart.fuel.FuelData.Point(49,3);
+    String signature=TripCostSession.signature(java.util.List.of(a,b));
+    assertEquals(signature,TripCostSession.signature(java.util.List.of(a,b)));
+    assertNotEquals(signature,TripCostSession.signature(java.util.List.of(b,a)));
+    assertNotEquals(signature,TripCostSession.signature(java.util.List.of(a,new com.navismart.fuel.FuelData.Point(49.000001,3))));
+    assertThrows(IllegalArgumentException.class,()->TripCostSession.signature(java.util.List.of(a)));
+  }
 }

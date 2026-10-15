@@ -71,7 +71,8 @@ Les indisponibilités du serveur ou de GitHub ne rendent pas le calcul local dis
 2. Préparer un trajet automobile, puis ouvrir « Comparer le coût des trajets ».
 3. Choisir la classe de péage du véhicule. Vérifier les suggestions ou choisir
    les entrées et sorties ; confirmer si elles couvrent réellement tout le trajet.
-4. Conserver cette variante, puis calculer celle avec évitement des péages.
+4. Calculer celle avec évitement des péages ; les variantes sont conservées
+   automatiquement pour la comparaison.
 5. Comparer les durées et totaux. Une route sans section à péage marquée reçoit
    une estimation à zéro dépendant de l’exhaustivité de la carte. Un ferry non
    chiffré laisse le total inconnu. Il n’y a aucune hypothèse de stationnement gratuit.
