@@ -116,3 +116,38 @@ PASS slower diagnostics are sampled fairly between motion rounds
 PASS limited vehicles only request supported sensors
 PASS empty support and backwards scheduler time rejected
 PASS: 4 OBD poll scheduling scenarios
+PASS toll directed tariff class 1 nominal
+PASS toll class 5 distinct
+PASS toll reverse not invented
+PASS toll unknown class not car default
+PASS toll missing class not zero
+PASS toll explicit zero preserved
+PASS toll stale download remains stale
+PASS toll new tariff year requires update
+PASS toll future received time invalid
+PASS toll quoted comma gate name
+PASS toll escaped quote gate name
+PASS toll duplicate pair rejected
+PASS toll conflicting gate name rejected
+PASS toll negative money rejected
+PASS toll too many money decimals rejected
+PASS toll non finite money rejected
+PASS toll unclosed quoted name rejected
+PASS toll empty matrix rejected
+PASS toll combined tolls add once
+PASS toll partial coverage cannot become total
+PASS toll 90 minute 20 euro versus 120 minute 15 euro includes tolls
+PASS toll cheaper route still respects configured time limit
+PASS: 22 tariff scenarios
+PASS projected passages ordered along geometry
+PASS reverse direction requires a reverse tariff
+PASS single physical station cannot identify a pair
+PASS nearby distant road outside corridor rejected
+PASS duplicate booth coordinates do not duplicate price
+PASS expired tariff cannot become usable suggestion
+PASS unspecified vehicle class yields no quote
+PASS multiple matching logical stations rejected
+PASS ambiguous station labels rejected
+PASS strict government geography reader
+PASS invalid government position rejected
+PASS: 11 toll geography scenarios

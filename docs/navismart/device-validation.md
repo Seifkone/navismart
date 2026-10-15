@@ -42,6 +42,23 @@ affichage approximatif ne doit pas être interprété comme une mesure de consom
 5. Changer le trajet : la comparaison précédente doit être invalidée. Un achat simulé
    ne doit pas modifier le niveau enregistré du véhicule.
 
+## Coût total et péages
+
+1. Dans le panneau du trajet automobile, ouvrir « Comparer le coût des trajets ».
+   Vérifier la classe de péage choisie, la date du barème et les valeurs inconnues.
+2. Sur une liaison APRR/AREA vérifiable dans le PDF officiel, choisir entrée et
+   sortie dans le sens réel. Contrôler les suggestions géographiques avant ajout.
+3. Confirmer uniquement les tronçons couvrant réellement l’ensemble des péages.
+   Vérifier le détail énergie/péages/total et l’absence de double comptage.
+4. Calculer la variante avec évitement, comparer temps et coût, puis sélectionner
+   la variante souhaitée et revenir à la carte. Vérifier la conservation des étapes.
+5. Modifier un point, la classe ou une option : vérifier l’invalidation des prix
+   et des anciennes comparaisons. Ne pas réutiliser une confirmation sur une autre route.
+6. Sans réseau, vérifier le catalogue embarqué et la conservation du dernier
+   catalogue valide. L’échec d’une mise à jour ne doit pas effacer les tarifs.
+7. Vérifier aussi un réseau non couvert et une traversée en ferry : aucune
+   absence de tarif ne doit apparaître comme une gratuité confirmée.
+
 ## Avis routiers et sauvegardes
 
 Télécharger les avis Bison Futé, vérifier publication, horaires et distinction entre

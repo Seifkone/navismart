@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checkedAt": "2026-10-14T17:32:14Z",
+  "checkedAt": "2026-10-14T17:35:20Z",
   "networks": [
     {
       "id": "APRR",
@@ -22,5 +22,12 @@
       "pdfSha256": "e395aa88784cdcd960253213364c0dd4e82237b4b565cb1569a0642af220516b",
       "sha256": "9f4f1c80f8c3cb148f84ae57870bd76b4d8489562b3d36a0eb99e2f3742fe9d8"
     }
-  ]
+  ],
+  "geography": {
+    "file": "gates.csv",
+    "sha256": "76835611f52d4cddf8573c17f708d44e3aa4ebd927618e21ee16dfad6683d1a1",
+    "locations": 1266,
+    "sourceUrl": "https://static.data.gouv.fr/resources/gares-de-peage-du-reseau-routier-national-concede/20250728-140859/gares-peage-2025.csv",
+    "referenceYear": 2025
+  }
 }

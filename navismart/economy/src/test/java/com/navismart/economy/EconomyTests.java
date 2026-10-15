@@ -243,6 +243,7 @@ public final class EconomyTests
     ObdRecordingTests.run();
     ObdPollTests.run();
     TollTests.run();
+    TollHintTests.run();
   }
 
   private static Vehicle hybrid()

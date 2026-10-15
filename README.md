@@ -11,6 +11,9 @@ Fonctions ajoutées sur la branche `navismart` :
 - Prix gouvernementaux, ruptures, cache privé et ajout d’une station comme étape.
 - Comparaison conditionnelle du trajet initial et d’un arrêt choisi, avec distances
   routières réelles, quantité achetée, frais et durée d’arrêt explicites.
+- Comparaison du trajet standard et de l’évitement des péages : durée, énergie,
+  péages et total estimé ; catalogue APRR/AREA hors ligne, repérage assisté des gares
+  et fichiers de barèmes vérifiés chaque semaine puis actualisables dans l’application.
 - Avis Bison Futé avec dates et couverture partielle, consultables depuis le cache.
 - OBD standard Bluetooth classique, collecte explicite pendant le guidage, arrêt
   par notification et export CSV local.
@@ -21,7 +24,8 @@ Fonctions ajoutées sur la branche `navismart` :
 Les artefacts sont conservés quatorze jours. Les fonctions sont dans les réglages NaviSmart.
 
 Le cahier des charges reste en cours : génération automatique de plusieurs détours,
-appariement du trafic au réseau, récupération automatique des tarifs de péage et
+appariement du trafic au réseau, couverture tarifaire nationale et identification
+entièrement automatique des passages aux péages, ainsi que la
 calibration physique ne sont pas achevés. Aucun
 gain réel ni conseil précis de conduite n’est validé sans les mesures et essais nécessaires.
 

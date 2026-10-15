@@ -14,6 +14,8 @@ import app.organicmaps.sdk.routing.*;
 import app.organicmaps.sdk.settings.RoadType;
 import com.navismart.economy.*;
 import com.navismart.toll.TollCatalog;
+import com.navismart.toll.TollGateHints;
+import com.navismart.fuel.FuelData.Point;
 import java.io.IOException;
 import java.time.*;
 import java.util.*;
@@ -24,15 +26,18 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
 {
   private final java.util.concurrent.ExecutorService worker = Executors.newSingleThreadExecutor();
   private final Handler main = new Handler(Looper.getMainLooper());
-  private final RoutingController.RouteChangedListener routeListener = () -> main.post(() -> { resetQuote(); render(); });
+  private final RoutingController.RouteChangedListener routeListener = () -> main.post(() -> { resetQuote(); render(); detectHints(); });
   private TollRepository repository;
   private TollRepository.Snapshot snapshot;
   private boolean busy, failed;
   private int generation, quoteRevision = -1, vehicleClass;
   private String profileId = "";
   private Estimate manualTolls;
+  private Instant quoteAt;
   private final List<Estimate> selectedTolls = new ArrayList<>();
   private final List<String> selectedLabels = new ArrayList<>();
+  private record Offer(String network,TollGateHints.Hint hint) {}
+  private List<Offer> offers=List.of();
   @Override protected int getXmlResources() { return R.xml.prefs_navismart_vehicles; }
   @Override public void onCreatePreferences(Bundle state, String root) {
     super.onCreatePreferences(state, root); repository = new TollRepository(requireContext()); load(false);
@@ -48,12 +53,16 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
         if (!refresh && result != null && !result.fresh(Instant.now())) {
           try { result=repository.refresh(Instant.now()); } catch (IOException | RuntimeException e) { failure=true; }
         }
-      } catch (IOException | RuntimeException e) { failure=true; try { result=repository.load(); } catch (IOException | RuntimeException ignored) {} }
+      } catch (IOException | RuntimeException e) {
+        failure=true;
+        try { result=repository.load(); }
+        catch (IOException | RuntimeException ignored) { try {result=repository.bundled();}catch(IOException | RuntimeException unavailable){} }
+      }
       var data=result; boolean error=failure;
-      main.post(() -> { if (!isAdded() || ticket!=generation) return; snapshot=data; failed=error; busy=false; resetQuote(); render(); });
+      main.post(() -> { if (!isAdded() || ticket!=generation) return; snapshot=data; failed=error; busy=false; resetQuote(); render(); detectHints(); });
     });
   }
-  private void resetQuote() { manualTolls=null; selectedTolls.clear(); selectedLabels.clear(); quoteRevision=-1; }
+  private void resetQuote() { manualTolls=null; quoteAt=null; offers=List.of(); selectedTolls.clear(); selectedLabels.clear(); quoteRevision=-1; }
   private void render() {
     if (!isAdded()) return;
     var screen=getPreferenceScreen(); if (screen==null) return; screen.removeAll();
@@ -75,19 +84,20 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
     if (profile==null) { info(getString(R.string.navismart_prepare_route)); return; }
     var prefs=requireContext().getSharedPreferences("navismart_tolls",0);
     String id=profile.vehicle().id();
-    if (!id.equals(profileId)) { profileId=id; vehicleClass=prefs.getInt("class_"+id,0); resetQuote(); TripCostSession.clear(); }
+    if (!id.equals(profileId)) { profileId=id; vehicleClass=prefs.getInt("class_"+id,0); if(vehicleClass<0 || vehicleClass>5)vehicleClass=0; resetQuote(); }
     var classChoice=new ListPreference(requireContext()); classChoice.setPersistent(false);
+    classChoice.setKey("navismart_toll_vehicle_class");
     classChoice.setTitle(R.string.navismart_toll_class); classChoice.setEntries(R.array.navismart_toll_classes);
     classChoice.setEntryValues(new String[]{"0","1","2","3","4","5"}); classChoice.setValue(Integer.toString(vehicleClass));
     classChoice.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
-    classChoice.setOnPreferenceChangeListener((p,v) -> { vehicleClass=Integer.parseInt((String)v); prefs.edit().putInt("class_"+profileId,vehicleClass).apply(); resetQuote(); TripCostSession.clear(); render(); return true; }); screen.addPreference(classChoice);
+    classChoice.setOnPreferenceChangeListener((p,v) -> { vehicleClass=Integer.parseInt((String)v); prefs.edit().putInt("class_"+profileId,vehicleClass).apply(); resetQuote(); TripCostSession.clear(); render(); detectHints(); return true; }); screen.addPreference(classChoice);
     var routing=RoutingController.get();
     if (!routing.isPlanning() || !routing.isBuilt() || !routing.isVehicleRouterType()) { info(getString(R.string.navismart_prepare_route)); return; }
     var now=Instant.now(); var points=Framework.nativeGetRoutePoints();
     String otherOptions=RoutingOptions.getActiveRoadTypes(Router.Vehicle).stream().filter(t->t!=RoadType.Toll).sorted().toList().toString()+profileId;
     TripCostSession.scope(points, vehicleClass, otherOptions, now);
     int revision=routing.getRouteGeometry().mRevision;
-    if (quoteRevision!=-1 && quoteRevision!=revision) resetQuote();
+    if (quoteRevision!=-1 && (quoteRevision!=revision || quoteAt==null || now.isBefore(quoteAt) || now.isAfter(quoteAt.plusSeconds(1800)))) resetQuote();
     int flags=Framework.nativeGetRouteFeeFlags();
     try {
       var legs=CoMapsEconomyAdapter.legs(Framework.nativeGetRouteLegMetrics());
@@ -100,11 +110,23 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
       info(getString(R.string.navismart_trip_current)+"\n"+summary(engine.evaluate(vehicle,current.route())));
       if (flags>=0 && (flags&1)==0 && manualTolls==null) info(getString(R.string.navismart_toll_map_zero));
       if (snapshot!=null && vehicleClass>0) action(R.string.navismart_toll_add_section,true,()->chooseNetwork(revision));
+      if (snapshot!=null && vehicleClass>0) action(R.string.navismart_toll_detect,!busy,this::detectHints);
+      for(var offer:offers) {
+        String label=offer.network()+" · "+offer.hint().entry().name()+" → "+offer.hint().exit().name()+" · "+value(offer.hint().price(),"€");
+        var suggested=new Preference(requireContext());suggested.setTitle(label);suggested.setSummary(R.string.navismart_toll_hint_notice);
+        suggested.setOnPreferenceClickListener(p->{
+          new AlertDialog.Builder(requireContext()).setMessage(R.string.navismart_toll_hint_confirm).setNegativeButton(android.R.string.cancel,null)
+              .setPositiveButton(android.R.string.ok,(d,w)->{
+                if(!sameRevision(revision) || selectedLabels.contains(label))return;
+                selectedTolls.add(offer.hint().price());selectedLabels.add(label);manualTolls=null;quoteRevision=revision;quoteAt=Instant.now();render();
+              }).show();return true;
+        });screen.addPreference(suggested);
+      }
       for (String label:selectedLabels) info(label);
       if (!selectedTolls.isEmpty()) action(R.string.navismart_toll_confirm_sections,true,()-> {
         new AlertDialog.Builder(requireContext()).setMessage(R.string.navismart_toll_complete_question)
             .setNegativeButton(android.R.string.cancel,null).setPositiveButton(android.R.string.ok,(d,w)-> {
-              if (!sameRevision(revision)) return; manualTolls=Estimate.sum(List.copyOf(selectedTolls)); quoteRevision=revision; render();
+              if (!sameRevision(revision)) return; manualTolls=Estimate.sum(List.copyOf(selectedTolls)); quoteRevision=revision; quoteAt=Instant.now(); render();
             }).show();
       });
       action(R.string.navismart_toll_manual,true,()->manual(revision));
@@ -132,6 +154,24 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
     return getString(R.string.navismart_trip_values,value(a.durationMinutes(),"min"),value(a.distanceKm(),"km"),
         value(a.consumedEnergyCostEuro(),"€"),value(a.route().tolls(),"€"),value(a.economicCostEuro(),"€"))+"\n"+state+" · "+feasible;
   }
+  private void detectHints() {
+    if(!isAdded() || busy || snapshot==null || vehicleClass<1)return;
+    var routing=RoutingController.get();if(!routing.isPlanning() || !routing.isBuilt() || !routing.isVehicleRouterType())return;
+    int revision=routing.getRouteGeometry().mRevision,capturedClass=vehicleClass;
+    var geometry=routing.getRouteGeometry().mJunctions;
+    if(geometry.length<2 || geometry.length>200000)return;
+    var route=new ArrayList<Point>();for(var p:geometry)route.add(new Point(p.mLat,p.mLon));
+    var data=snapshot;busy=true;render();int ticket=++generation;
+    worker.execute(()->{
+      List<Offer> result=new ArrayList<>();
+      try {for(var catalog:data.catalogs())for(var hint:TollGateHints.find(catalog,data.locations(),route,capturedClass,Instant.now()))result.add(new Offer(catalog.source().network(),hint));}
+      catch(RuntimeException ignored){result.clear();}
+      var found=List.copyOf(result);
+      main.post(()->{if(!isAdded() || ticket!=generation)return;busy=false;
+        if(sameRevision(revision) && capturedClass==vehicleClass)offers=found;render();
+      });
+    });
+  }
   private String value(Estimate e,String unit) { return e.expected()==null?getString(R.string.navismart_unknown):String.format(Locale.getDefault(),"≈ %.2f %s",e.expected(),unit); }
   private boolean sameRevision(int revision) { var r=RoutingController.get(); return isAdded() && r.isPlanning() && r.isBuilt() && r.getRouteGeometry().mRevision==revision; }
   private void rebuild(boolean avoid) {
@@ -158,7 +198,8 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
           new AlertDialog.Builder(requireContext()).setTitle(label).setMessage(catalog.source().effectiveFrom()+"\n"+quote.source()+"\n\n"+getString(R.string.navismart_toll_notice))
               .setNegativeButton(android.R.string.cancel,null).setPositiveButton(android.R.string.ok,(a,b)-> {
                 if (!sameRevision(revision) || !quote.isFresh()) return;
-                selectedTolls.add(quote); selectedLabels.add(label); manualTolls=null; quoteRevision=revision; render();
+                if (selectedLabels.contains(label)) return;
+                selectedTolls.add(quote); selectedLabels.add(label); manualTolls=null; quoteRevision=revision; quoteAt=Instant.now(); render();
               }).show();
         }).show();
   }
@@ -168,8 +209,9 @@ public final class TripCostSettingsFragment extends BaseXmlSettingsFragment
         .setView(input).setNegativeButton(android.R.string.cancel,null).setPositiveButton(android.R.string.ok,null).create();
     dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
       try { double amount=Double.parseDouble(input.getText().toString().trim().replace(',','.')); Estimate.checkNumber(amount);
+        if(Math.abs(amount*100-Math.rint(amount*100))>1e-6)throw new IllegalArgumentException("Whole cents required");
         if (amount>10000 || !sameRevision(revision)) return;
-        manualTolls=Estimate.nominal(amount,"User confirmed total tolls"); quoteRevision=revision; selectedTolls.clear(); selectedLabels.clear(); dialog.dismiss(); render();
+        manualTolls=Estimate.nominal(amount,"User confirmed total tolls"); quoteRevision=revision; quoteAt=Instant.now(); selectedTolls.clear(); selectedLabels.clear(); dialog.dismiss(); render();
       } catch (IllegalArgumentException e) { input.setError(getString(R.string.navismart_compare_invalid)); }
     })); dialog.show();
   }

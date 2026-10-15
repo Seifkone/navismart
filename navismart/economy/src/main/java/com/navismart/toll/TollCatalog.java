@@ -87,7 +87,7 @@ public final class TollCatalog
     if (previous != null && !previous.name().equals(name)) throw new IOException("Conflicting gate name");
   }
   /** Bounded RFC 4180 reader, including quoted commas; caller owns input. */
-  private static List<String> row(Reader in, int[] size) throws IOException {
+  static List<String> row(Reader in, int[] size) throws IOException {
     var fields = new ArrayList<String>(); var field = new StringBuilder();
     boolean quoted = false, closed = false, seen = false;
     for (;;) {

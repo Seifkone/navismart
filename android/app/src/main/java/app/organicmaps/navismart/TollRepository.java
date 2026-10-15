@@ -3,6 +3,7 @@ package app.organicmaps.navismart;
 import android.content.Context;
 import android.util.AtomicFile;
 import com.navismart.toll.TollCatalog;
+import com.navismart.toll.TollGateHints;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -13,25 +14,32 @@ import org.json.*;
 
 /** Static data files from the fork. No remote routing API; every replacement is checked atomically. */
 public final class TollRepository {
-  private static final int MAGIC=0x4e535432;
+  private static final int MAGIC=0x4e535433;
+  private static final Object CACHE_LOCK=new Object();
   private static final String ROOT="https://raw.githubusercontent.com/Seifkone/navismart/navismart/android/app/src/main/assets/navismart-tolls/";
   private final Context context;
   private final AtomicFile file;
-  public record Snapshot(Instant receivedAt,List<TollCatalog> catalogs) {
-    public Snapshot { catalogs=List.copyOf(catalogs); }
+  public record Snapshot(Instant receivedAt,List<TollCatalog> catalogs,List<TollGateHints.Location> locations) {
+    public Snapshot { catalogs=List.copyOf(catalogs); locations=List.copyOf(locations); }
     public boolean fresh(Instant now) {
       return !now.isBefore(receivedAt) && Duration.between(receivedAt,now).compareTo(Duration.ofDays(7))<=0
           && catalogs.stream().allMatch(c->!now.isBefore(c.source().receivedAt()) && Duration.between(c.source().receivedAt(),now).compareTo(Duration.ofDays(7))<=0);
     }
   }
   private record Download(TollCatalog.Source source,byte[] bytes) {}
-  private record Pack(Snapshot snapshot,List<Download> downloads) {}
+  private record Pack(Snapshot snapshot,List<Download> downloads,byte[] geography) {}
   public TollRepository(Context context) {
-    this.context=context.getApplicationContext(); file=new AtomicFile(new File(context.getFilesDir(),"navismart-tolls-v2.bin"));
+    this.context=context.getApplicationContext(); file=new AtomicFile(new File(context.getFilesDir(),"navismart-tolls-v3.bin"));
   }
   public Snapshot load() throws IOException {
+    synchronized(CACHE_LOCK){return readCache();}
+  }
+  public Snapshot bundled() throws IOException {
+    try(var in=context.getAssets().open("navismart-tolls/manifest.json")) { return parse(read(in,100_000),false,Instant.now(),null).snapshot(); }
+  }
+  private Snapshot readCache() throws IOException {
     if (!file.getBaseFile().exists() && !new File(file.getBaseFile().getPath()+".bak").exists()) {
-      try(var in=context.getAssets().open("navismart-tolls/manifest.json")) { return parse(read(in,100_000),false,Instant.now(),null).snapshot(); }
+      return bundled();
     }
     try(var in=new DataInputStream(file.openRead())) {
       if(in.readInt()!=MAGIC)throw new IOException("Unsupported tariff cache");
@@ -41,14 +49,21 @@ public final class TollRepository {
       for(int i=0;i<count;i++) {
         String id=in.readUTF(); if(!id.matches("[A-Z0-9_]{1,30}") || !ids.add(id))throw new IOException("Invalid network");
         var source=new TollCatalog.Source(id,in.readUTF(),LocalDate.parse(in.readUTF()),Instant.ofEpochMilli(in.readLong()));
-        int length=in.readInt(); total+=length;
+        String checksum=in.readUTF();int length=in.readInt(); total+=length;
         if(length<=0 || length>8_000_000 || total>25_000_000)throw new IOException("Oversized cache");
-        byte[] bytes=new byte[length]; in.readFully(bytes); catalogs.add(TollCatalog.read(new ByteArrayInputStream(bytes),source));
+        byte[] bytes=new byte[length]; in.readFully(bytes);if(!sha256(bytes).equals(checksum))throw new IOException("Damaged tariff cache");
+        catalogs.add(TollCatalog.read(new ByteArrayInputStream(bytes),source));
       }
-      if(in.read()!=-1)throw new IOException("Trailing cache data"); return new Snapshot(received,catalogs);
+      String geoChecksum=in.readUTF();int geoLength=in.readInt(); if(geoLength<=0 || geoLength>1_000_000)throw new IOException("Invalid geography cache");
+      byte[] geo=new byte[geoLength];in.readFully(geo);if(!sha256(geo).equals(geoChecksum))throw new IOException("Damaged geography cache");
+      var locations=TollGateHints.read(new InputStreamReader(new ByteArrayInputStream(geo),StandardCharsets.UTF_8));
+      if(in.read()!=-1)throw new IOException("Trailing cache data"); return new Snapshot(received,catalogs,locations);
     }catch(IllegalArgumentException e){throw new IOException("Invalid tariff cache",e);}
   }
-  public synchronized Snapshot refresh(Instant now)throws IOException {
+  public Snapshot refresh(Instant now)throws IOException {
+    synchronized(CACHE_LOCK){return refreshLocked(now);}
+  }
+  private Snapshot refreshLocked(Instant now)throws IOException {
     var prefs=context.getSharedPreferences("navismart_tolls",0); long previous=prefs.getLong("attempt",0);
     if(previous>0 && now.toEpochMilli()>=previous && now.toEpochMilli()-previous<300_000)throw new IOException("Tariff backoff");
     prefs.edit().putLong("attempt",now.toEpochMilli()).apply(); Snapshot old=null;
@@ -59,8 +74,9 @@ public final class TollRepository {
       out.writeInt(MAGIC);out.writeLong(now.toEpochMilli());out.writeInt(pack.downloads().size());
       for(var d:pack.downloads()) {
         out.writeUTF(d.source().network());out.writeUTF(d.source().url());out.writeUTF(d.source().effectiveFrom().toString());
-        out.writeLong(d.source().receivedAt().toEpochMilli());out.writeInt(d.bytes().length);out.write(d.bytes());
+        out.writeLong(d.source().receivedAt().toEpochMilli());out.writeUTF(sha256(d.bytes()));out.writeInt(d.bytes().length);out.write(d.bytes());
       }
+      out.writeUTF(sha256(pack.geography()));out.writeInt(pack.geography().length);out.write(pack.geography());
       out.flush();file.finishWrite(output);return pack.snapshot();
     }catch(IOException e){if(output!=null)file.failWrite(output);throw e;}
   }
@@ -92,7 +108,15 @@ public final class TollRepository {
         downloads.add(new Download(source,bytes));catalogs.add(catalog);
       }
       if(previous!=null)for(var old:previous.catalogs())if(!ids.contains(old.source().network()))throw new IOException("Coverage regression");
-      return new Pack(new Snapshot(now,catalogs),List.copyOf(downloads));
+      var geoInfo=root.getJSONObject("geography");
+      if(!geoInfo.getString("file").equals("gates.csv"))throw new IOException("Unexpected geography file");
+      byte[] geography;
+      if(remote)geography=download(ROOT+"gates.csv",1_000_000);
+      else try(var in=context.getAssets().open("navismart-tolls/gates.csv")){geography=read(in,1_000_000);}
+      if(!sha256(geography).equalsIgnoreCase(geoInfo.getString("sha256")))throw new IOException("Geography digest mismatch");
+      var locations=TollGateHints.read(new InputStreamReader(new ByteArrayInputStream(geography),StandardCharsets.UTF_8));
+      if(locations.size()!=geoInfo.getInt("locations"))throw new IOException("Incomplete geography");
+      return new Pack(new Snapshot(now,catalogs,locations),List.copyOf(downloads),geography);
     }catch(JSONException | IllegalArgumentException e){throw new IOException("Invalid tariff manifest",e);}
   }
   private static String sha256(byte[] bytes) {

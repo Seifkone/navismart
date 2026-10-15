@@ -163,4 +163,7 @@
   <string name="navismart_toll_network">Tariff network</string>
   <string name="navismart_toll_entry">Actual entry toll station</string>
   <string name="navismart_toll_exit">Actual exit toll station</string>
+  <string name="navismart_toll_detect">Find possible toll entries and exits</string>
+  <string name="navismart_toll_hint_notice">Geographical suggestion — check entry, exit and travel direction</string>
+  <string name="navismart_toll_hint_confirm">Add this proposed entry/exit pair? Nearby roads and parallel carriageways can be confused. Check the actual passage; complete toll coverage must still be confirmed.</string>
 </resources>

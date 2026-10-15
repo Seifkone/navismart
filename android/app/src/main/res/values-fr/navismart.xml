@@ -163,4 +163,7 @@
   <string name="navismart_toll_network">Réseau du barème</string>
   <string name="navismart_toll_entry">Gare de péage d’entrée réelle</string>
   <string name="navismart_toll_exit">Gare de péage de sortie réelle</string>
+  <string name="navismart_toll_detect">Repérer les entrées et sorties possibles</string>
+  <string name="navismart_toll_hint_notice">Suggestion géographique — vérifier entrée, sortie et sens</string>
+  <string name="navismart_toll_hint_confirm">Ajouter ce couple entrée/sortie proposé ? Des routes voisines et des chaussées parallèles peuvent être confondues. Vérifier le passage réel ; la couverture complète des péages doit encore être confirmée.</string>
 </resources>

@@ -34,7 +34,24 @@ final class TollTests
     test("empty matrix rejected",()->invalid(""));
     test("combined tolls add once",()->near(7,Estimate.sum(List.of(read(ROW).quote("1","2",1,NOW),read(ROW).quote("1","2",1,NOW))).expected()));
     test("partial coverage cannot become total",()->equal(null,Estimate.sum(List.of(read(ROW).quote("1","2",1,NOW),Estimate.missing(Estimate.State.UNKNOWN,"missing section"))).expected()));
+    test("90 minute 20 euro versus 120 minute 15 euro includes tolls",()-> {
+      var vehicle=exampleVehicle();
+      var a=exampleRoute("a",100,90,8);var b=exampleRoute("b",125,120,0);
+      var decision=new EconomyEngine().compare(vehicle,List.of(a,b),new TripModel.Policy(34,.5,.25),null);
+      near(20,decision.assessments().get(0).economicCostEuro().expected());
+      near(15,decision.assessments().get(1).economicCostEuro().expected());equal("b",decision.recommendedRouteId());
+    });
+    test("cheaper route still respects configured time limit",()-> {
+      var decision=new EconomyEngine().compare(exampleVehicle(),List.of(exampleRoute("a",100,90,8),exampleRoute("b",125,120,0)),new TripModel.Policy(5,.5,.25),null);
+      equal("a",decision.recommendedRouteId());equal(EconomyEngine.TimeStatus.EXCEEDS,decision.timeStatuses().get("b"));
+    });
     System.out.println("PASS: "+passed+" tariff scenarios");
+  }
+  private static TripModel.Vehicle exampleVehicle() {
+    return new TripModel.Vehicle("test","Synthetic",TripModel.Powertrain.COMBUSTION,List.of(new TripModel.Store("tank",TripModel.Energy.SP95_E10,50.0,40.0,5.0,Estimate.exact(6),Estimate.exact(2))));
+  }
+  private static TripModel.Route exampleRoute(String id,double km,double minutes,double tolls) {
+    return new TripModel.Route(id,id,List.of(new TripModel.Leg("road",Estimate.exact(km),Estimate.exact(minutes),Map.of())),Estimate.exact(tolls),Estimate.exact(0));
   }
   private static TollCatalog read(String rows) {
     try { return TollCatalog.read(new ByteArrayInputStream((HEADER+rows).getBytes(StandardCharsets.UTF_8)),SOURCE); }
